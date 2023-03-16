@@ -4,6 +4,56 @@
   
   
   <entry>
+    <title>王树森强化学习网课-L03-策略学习</title>
+    <link href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L03-%E7%AD%96%E7%95%A5%E5%AD%A6%E4%B9%A0/"/>
+    <url>/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L03-%E7%AD%96%E7%95%A5%E5%AD%A6%E4%B9%A0/</url>
+    
+    <content type="html"><![CDATA[<p>在第一课中,我们知道,实现强化学习任务可以通过价值学习或者策略学习.其中策略学习就是学习动作价值函数,并在每一轮中,选取动作价值最高的动作,这一点在第二课进行了详细阐述.<br>策略学习,则是直接学习策略函数$\pi(a_t|s_t)$,在第一课的结尾我曾猜想策略函数的学习应该是要基于策略下的状态价值函数$V_{\pi}(s_t) &#x3D; E_A[Q_{\pi}(s_t,A)]$.这里我知道猜对了哈哈.下面开始正经介绍.</p><h1 id="策略网络"><a href="#策略网络" class="headerlink" title="策略网络"></a>策略网络</h1><p>既然是对策略函数进行学习,自然是先构建一个策略函数的估计网络$\pi(a_t|s_t;\theta)$.我们要更新一个网络总要有个目标.巧了,我们在第一课谈过,如果我们在同一个状态state下,对不同策略$\pi$下的状态价值函数$V_{\pi}$进行比较,就知道哪个策略更能当前的状态赢面大了.那么如果我们针对state这个随机变量对$V_{\pi}(s)$求期望的话,就可以作为评价策略的依据了.如果这个期望越大,说明策略越好.</p><hr><p><strong>于是我们有这样的初步想法:</strong></p><blockquote><p>给定一个需要最大化的目标函数:<br>$J(\theta) &#x3D; E_S[V_{\pi}(S;\theta)]$<br>为什么上述的状态价值函数中含有策略函数网络的参数$\theta$呐?因为$V_{\pi}(S) &#x3D; \sum_a \pi(a|S) \cdot Q_{\pi}(S,a)$.现在$\pi(a|S)$变成了$\pi(a|S;\theta)$,$V_{\pi}(S)$自然变成了$V_{\pi}(S;\theta)$.<br>于是我们这样学习参数:<br>$\theta_{t+1} &#x3D; \theta_t + \beta \cdot \frac{\partial J(\theta)}{\partial \theta}|_{\theta &#x3D; \theta_t}$</p></blockquote><p>上述想法暂时无法实现,因为我们其实没法对state这个随机变量求期望.我们只能用当前值,假想它就是均值结果(实际上并不是,只是无偏估计),这种方法叫做蒙特卡洛法.</p><blockquote><p>解释下:<br>蒙特卡洛法求期望就是:对于一个随机变量,和这个变量的概率密度函数,正经的期望应该是随机变量和概率密度函数乘积的积分.但概率密度函数未知,我们就不数值计算了,我们看这个黑箱的概率密度函数的抽样结果是什么,它抽出来什么我们就认为均值是什么.在这里,这个未知的概率密度函数就是状态转换函数.策略学习中多次(3次)用到蒙特卡洛法,所以还是需要整明白的.</p></blockquote><hr><p><strong>于是我们用当前</strong>$s$<strong>的</strong>$V_{\pi}$<strong>,而不是所有</strong>$s$<strong>的</strong>$V_{\pi}$<strong>的均值,来作为价值函数网络参数</strong>$\theta$<strong>更新的标准:</strong></p><blockquote><p>$\theta_{t+1} &#x3D; \theta_t + \beta \cdot \frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta}|<em>{\theta &#x3D; \theta_t}$<br>$\frac{\partial V</em>{\pi}(s_t;\theta)}{\partial \theta} &#x3D; \sum_a Q_{\pi}(s_t,a) \frac{\partial \pi(a|s_t;\theta)}{\partial \theta}|_{\theta &#x3D; \theta_t}$</p></blockquote><p>如果$a$是离散的,我们就按照上式对每个$a$求值再求和就行.但如果$a$是连续的,我们一般这种求和就会变成积分,如果积分项里有PDF,那就成了求期望,如果无法解析地求期望,我们可以用蒙特卡洛的思想近似期望.以下公式就是通过一个巧妙的变换,把求积分问题又变成了求期望问题,最后用蒙特卡洛近似了:<br>$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta} &#x3D; \sum_a Q_{\pi}(s_t,a) \frac{\partial \pi(a|s_t;\theta)}{\partial \theta}|<em>{\theta &#x3D; \theta_t} &#x3D; \sum_a Q</em>{\pi}(s_t,a) \pi(a|s_t;\theta) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t} &#x3D; E_A[Q</em>{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t}] &#x3D; Q</em>{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|_{\theta&#x3D; \theta_t}$</p><hr><p><strong>至此,我们有了训练策略网络的算法:</strong></p><blockquote><p>$q_t &#x3D; Q_{\pi}(s_t,a_t)$<br>$d_{\theta,t} &#x3D; \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|\theta &#x3D; \theta_t$<br>$g(a_t,\theta_t) &#x3D; q_t \cdot d_{\theta,t}$<br>$\theta_{t+1} &#x3D; \theta_t + \beta \cdot g(a_t,\theta_t)$</p></blockquote><p>好了,到此我们可以讨论$q_t$到底怎么来了.</p><ol><li>如果我们一整轮都不更新,然后跑完整个trial,我们就知道每一步的$q_t$了,这也是一步蒙特卡洛.这种方法称为REINFORCE方法.</li><li>我们也可以用价值学习中的价值网络来估计这个$q_t$,这种方法叫做Actor-Critic方法.</li></ol><p>单纯策略学习好像没有单纯价值学习好用.当然最好是直接走Actor-Critic方法,我们下一节介绍.</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>王树森强化学习网课-L02-价值学习</title>
+    <link href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L02-%E4%BB%B7%E5%80%BC%E5%AD%A6%E4%B9%A0/"/>
+    <url>/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L02-%E4%BB%B7%E5%80%BC%E5%AD%A6%E4%B9%A0/</url>
+    
+    <content type="html"><![CDATA[<h1 id="DQN与TD-Learning"><a href="#DQN与TD-Learning" class="headerlink" title="DQN与TD Learning"></a>DQN与TD Learning</h1><p>通过第一课，我们知道了什么是最优动作价值函数$Q^*$，也明白了其意义(在一定$s$下,$Q^*$给所有$a$打分,agent可据此选出得分最高的$a$)。过程如下:</p><blockquote><p>$Q^*(s_t,a_t) &#x3D; \mathop{max}\limits_{\pi}Q_{\pi}(s_t,a_t)$<br>$a_t &#x3D; \mathop{max}\limits_{a} Q^*(s_t,a)$</p></blockquote><p>看似非常美好,但有个根本性的问题:我们怎么得到$Q^*$?<br>实际上,通过学习$Q^*$来完成强化学习任务的方法就叫做价值学习.DQN就是用神经网络学习$Q^*$的价值学习方法.</p><h2 id="DQN"><a href="#DQN" class="headerlink" title="DQN"></a>DQN</h2><p><strong>DQN神经网络的形式如下:</strong></p><blockquote><p>$Q(s_t,a_t;\omega_t)$</p></blockquote><p>我们希望DQN的输出能够逼近真正的$Q^*$,就得学习更新网络参数$\omega_t$.因为我们的目标是使得神经网络的估计接近真实,也就是误差减小,自然地,我们会想到梯度下降法:</p><blockquote><p>$L_t &#x3D; \frac{1}{2} (Q^*(s_t,a_t) - Q(s_t,a_t;w_t))^2$<br>$\omega_{t+1} &#x3D; \omega_t - \alpha \cdot \frac{\partial L_t}{\partial \omega}|<em>{\omega &#x3D; \omega_t} &#x3D; \omega_t - \alpha \cdot (Q^*(s_t,a_t) - Q(s_t,a_t;w_t)) \cdot \frac{\partial Q(s_t,a_t;w)}{\partial \omega} |</em>{\omega &#x3D; \omega_t}$</p></blockquote><p>但这里还是用到了未知的$Q^*$,所以不可行.除非我们把所有的路径都遍历完,才能找出$Q^*$.真找着了,那还要强化学习干嘛?全部硬遍历,算到地老天荒吧.</p><hr><h2 id="TD-Learning"><a href="#TD-Learning" class="headerlink" title="TD Learning"></a>TD Learning</h2><p><strong>这时我们需要引入TD Learning的思想:</strong></p><ul><li>$Q(s_t,a_t;w_t)$是完全没有根据的预测(一步都没走),可信度最低,需要找一个可信度比他高的参考;</li><li>$Q^*(s_t,a_t)$是客观存在的结果,等于最好情况下的回报(所有步都走完了),可信度最高,但无法得到不能作为参考;</li><li>我们可不可以利用上需要更新DQN时已经获得的数据,得到一个可行度介于DQN和$Q^*$之间的参考目标?毕竟,我们需要更新DQN的$\omega_t$为$\omega_{t+1}$时,第$t$步已经走完了,这一步的奖励$r_t$和下一步的状态$s_{t+1}$已经得到了.我们可以发现:$r_t + \gamma \cdot Q(s_{t+1},a_{t+1};\omega_t)$就是一个介于DQN和$Q^*$的选择,我们称之为<strong>TD Target</strong>.</li></ul><hr><p><strong>具体怎么回事,可以看看这个不严谨的推理:</strong></p><ol><li><p>不管DQN还是$Q^*$,都是对回报$U_t$的估计,$U_t$根据定义满足下式:</p><blockquote><p>$U_t &#x3D; R_t + \gamma \cdot U_{t+1}$</p></blockquote></li><li><p>进而将$U_t$替换为DQN后可得到:</p><blockquote><p>$\begin{aligned}<br>Q(s_t,a_t;w_t)<br>&amp; \approx E[R_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t)] \<br>&amp; \approx r_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t) \<br>&amp; \approx r_t + \gamma \cdot \mathop{max}<em>\limits{a} Q(s</em>{t+1},a;w_t)<br>\end{aligned}$</p></blockquote></li></ol><hr><p><strong>好,总之我们目前有了</strong>$Q^*$<strong>的平替TD Target</strong>$y_t &#x3D; r_t + \gamma \cdot Q_{t+1}(s_{t+1},a_{t+1};w_t)$<strong>,就可以继续用梯度法更新权重了:</strong></p><blockquote><p>补充:<br>这里的$a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t)$.我们下一步的$a$不一定就是这个$a_{t+1}$,具体怎么回事后面再交代.</p></blockquote><blockquote><p>$\begin{aligned}<br>&amp; q_t &#x3D; Q(s_t,a_t;w_t)\<br>&amp; a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t) \<br>&amp; y_t &#x3D; r_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t) \<br>&amp; L_t &#x3D; \frac{1}{2} (q_t - y_t)^2 \<br>&amp; \omega_{t+1} &#x3D; \omega_t - \alpha \frac{\partial L_t}{\partial\omega}|<em>{\omega &#x3D; \omega_t} \<br>&amp; d_t &#x3D; \frac{\partial Q(s</em>{t+1},a_{t+1};w) }{\partial \omega}|<em>{\omega &#x3D; \omega_t} \<br>&amp; \omega</em>{t+1} &#x3D; \omega_t - \alpha (q_t-y_t) \cdot d_t \<br>\end{aligned}$</p></blockquote><p>或者说:</p><blockquote><p>$\begin{aligned}<br>&amp; q_t &#x3D; Q(s_t,a_t;w_t)\<br>&amp; a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t) \<br>&amp; y_t &#x3D; r_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t) \<br>&amp; d_t &#x3D; \frac{\partial Q(s_{t+1},a_{t+1};w) }{\partial \omega}|\omega &#x3D; \omega_t \<br>&amp; \omega_{t+1} &#x3D; \omega_t - \alpha (q_t-y_t) \cdot d_t \<br>\end{aligned}$</p></blockquote><p>这就是TD Learning的全部.你给DQN输入状态$s$,他就会给你返回所有动作的打分.然后你再选出其中分数最高的动作就完成了agent选动作的步骤.然后agent得到这一步的reward,感知到下一步的state时,就可以更新DQN了,更新完选出下一步的action,这就是下一轮循环了.</p><h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>我们在计算TD Target的时候,用到了一个下一时刻动作的估计$a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t)$.这是我们站在$t$时刻对$t+1$时刻的估计,我们在$t+1$时刻,完全可以重新计算$a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_{t+1})$.<br>如果我们真的采用了预测时给出的动作,这就死SARSA算法的思想,他的特点就是非常安全(毕竟你怎么预测就怎么做),相应地可能会表现的比较胆小.<br>如果我们用新的网络参数做了重新计算,那就是QLearning的思想,他的特点就是比较大胆,相应地没有SARSA那么安全.</p><h1 id="DQN案例"><a href="#DQN案例" class="headerlink" title="DQN案例"></a>DQN案例</h1><p>看演示,用DQN就能做打砖块的游戏了.但我不会用python搭神经网络.所以过完这个理论课后,我得赶紧跟着李沐学深度学习了.</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>王树森强化学习网课-L01-基本概念</title>
     <link href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L01-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
     <url>/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L01-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</url>

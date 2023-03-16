@@ -14,17 +14,17 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Magic Chestnut">
-  <meta name="keywords" content="agent、enviroment、state、action、policy">
+  <meta name="keywords" content="policy、monte carlo、REINFORCE、Actor-Critic">
   
-    <meta name="description" content="前言 王树森老师的强化学习入门视频教程似乎是对我来说最清晰易懂的。他的视频我在上学期末看过一遍，大概知道了强化学习是干什么的，这个学期初又看了一遍，并且整理了这个笔记初版，基本了解了视频的所有内容，但还保留了些问题。这次我从整理笔记出发，把整个课程过一遍，真正形成自己的理解。笔记里的很多东西可能不是王老师的本意是我的误读，我的表述也会有很多不严谨的地方，本质来说就是我的一个小笔记。  第一课-基本">
+    <meta name="description" content="在第一课中,我们知道,实现强化学习任务可以通过价值学习或者策略学习.其中策略学习就是学习动作价值函数,并在每一轮中,选取动作价值最高的动作,这一点在第二课进行了详细阐述.策略学习,则是直接学习策略函数$\pi(a_t|s_t)$,在第一课的结尾我曾猜想策略函数的学习应该是要基于策略下的状态价值函数$V_{\pi}(s_t) &#x3D; E_A[Q_{\pi}(s_t,A)]$.这里我知道猜对了哈">
 <meta property="og:type" content="article">
-<meta property="og:title" content="王树森强化学习网课-L01-基本概念">
-<meta property="og:url" content="http://example.com/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L01-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:title" content="王树森强化学习网课-L03-策略学习">
+<meta property="og:url" content="http://example.com/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L03-%E7%AD%96%E7%95%A5%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="来看雪泥焗鸿爪">
-<meta property="og:description" content="前言 王树森老师的强化学习入门视频教程似乎是对我来说最清晰易懂的。他的视频我在上学期末看过一遍，大概知道了强化学习是干什么的，这个学期初又看了一遍，并且整理了这个笔记初版，基本了解了视频的所有内容，但还保留了些问题。这次我从整理笔记出发，把整个课程过一遍，真正形成自己的理解。笔记里的很多东西可能不是王老师的本意是我的误读，我的表述也会有很多不严谨的地方，本质来说就是我的一个小笔记。  第一课-基本">
+<meta property="og:description" content="在第一课中,我们知道,实现强化学习任务可以通过价值学习或者策略学习.其中策略学习就是学习动作价值函数,并在每一轮中,选取动作价值最高的动作,这一点在第二课进行了详细阐述.策略学习,则是直接学习策略函数$\pi(a_t|s_t)$,在第一课的结尾我曾猜想策略函数的学习应该是要基于策略下的状态价值函数$V_{\pi}(s_t) &#x3D; E_A[Q_{\pi}(s_t,A)]$.这里我知道猜对了哈">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-16T07:06:24.290Z">
-<meta property="article:modified_time" content="2023-03-16T07:15:29.903Z">
+<meta property="article:published_time" content="2023-03-16T08:21:44.084Z">
+<meta property="article:modified_time" content="2023-03-16T09:34:03.570Z">
 <meta property="article:author" content="Magic Chestnut">
 <meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>王树森强化学习网课-L01-基本概念 - 来看雪泥焗鸿爪</title>
+  <title>王树森强化学习网课-L03-策略学习 - 来看雪泥焗鸿爪</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="王树森强化学习网课-L01-基本概念"></span>
+            <span id="subtitle" data-typed-text="王树森强化学习网课-L03-策略学习"></span>
           
         </div>
 
@@ -214,7 +214,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-16 15:06" pubdate>
+        <time datetime="2023-03-16 16:21" pubdate>
           2023年3月16日 下午
         </time>
       </span>
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.3k 字
+          2.4k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          36 分钟
+          20 分钟
         
       </span>
     
@@ -283,101 +283,39 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">王树森强化学习网课-L01-基本概念</h1>
+            <h1 style="display: none">王树森强化学习网课-L03-策略学习</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
-<p>王树森老师的强化学习入门视频教程似乎是对我来说最清晰易懂的。他的视频我在上学期末看过一遍，大概知道了强化学习是干什么的，这个学期初又看了一遍，并且整理了这个笔记初版，基本了解了视频的所有内容，但还保留了些问题。这次我从整理笔记出发，把整个课程过一遍，真正形成自己的理解。笔记里的很多东西可能不是王老师的本意是我的误读，我的表述也会有很多不严谨的地方，本质来说就是我的一个小笔记。</p>
-</blockquote>
-<h1 id="第一课-基本概念"><a href="#第一课-基本概念" class="headerlink" title="第一课-基本概念"></a>第一课-基本概念</h1><blockquote>
-<p>我们先拿一个室内机器人举例子。</p>
-</blockquote>
-<h2 id="强化学习世界观"><a href="#强化学习世界观" class="headerlink" title="强化学习世界观"></a>强化学习世界观</h2><p><strong>在强化学习眼里，是这么看待机器人的室内运动的：</strong><br>首先，我们把被研究对象和它所处的具体环境，提出来作为我们关注的系统，并把这两个主体分别称为agent和enviroment。比如我们把机器人叫做代理Agent，把室内环境叫做环境Enviroment。<br>agent可以感知到enviroment的状态state，然后根据这个state做出动作action。<br>enviroment根据agent的action，改变state。至此enviroment的工作结束。</p>
+                <p>在第一课中,我们知道,实现强化学习任务可以通过价值学习或者策略学习.其中策略学习就是学习动作价值函数,并在每一轮中,选取动作价值最高的动作,这一点在第二课进行了详细阐述.<br>策略学习,则是直接学习策略函数$\pi(a_t|s_t)$,在第一课的结尾我曾猜想策略函数的学习应该是要基于策略下的状态价值函数$V_{\pi}(s_t) &#x3D; E_A[Q_{\pi}(s_t,A)]$.这里我知道猜对了哈哈.下面开始正经介绍.</p>
+<h1 id="策略网络"><a href="#策略网络" class="headerlink" title="策略网络"></a>策略网络</h1><p>既然是对策略函数进行学习,自然是先构建一个策略函数的估计网络$\pi(a_t|s_t;\theta)$.我们要更新一个网络总要有个目标.巧了,我们在第一课谈过,如果我们在同一个状态state下,对不同策略$\pi$下的状态价值函数$V_{\pi}$进行比较,就知道哪个策略更能当前的状态赢面大了.那么如果我们针对state这个随机变量对$V_{\pi}(s)$求期望的话,就可以作为评价策略的依据了.如果这个期望越大,说明策略越好.</p>
+<hr>
+<p><strong>于是我们有这样的初步想法:</strong></p>
 <blockquote>
-<p>补充细节：<br>agent不一定能感知到完整的，没有噪音的state，一般只能感知到部分的，有噪音的state，称为observation<br>这个state不一定完全是描述enviroment的state，也可能包含agent的state，比如室内机器人的位置信息<br>agent存在的目的就是为按照我们的意愿改变state。</p>
+<p>给定一个需要最大化的目标函数:<br>$J(\theta) &#x3D; E_S[V_{\pi}(S;\theta)]$<br>为什么上述的状态价值函数中含有策略函数网络的参数$\theta$呐?因为$V_{\pi}(S) &#x3D; \sum_a \pi(a|S) \cdot Q_{\pi}(S,a)$.现在$\pi(a|S)$变成了$\pi(a|S;\theta)$,$V_{\pi}(S)$自然变成了$V_{\pi}(S;\theta)$.<br>于是我们这样学习参数:<br>$\theta_{t+1} &#x3D; \theta_t + \beta \cdot \frac{\partial J(\theta)}{\partial \theta}|_{\theta &#x3D; \theta_t}$</p>
 </blockquote>
-<p>除上述内容外，我们再给enviroment赋予一个给state变化打分reward的功能、给agent一个接收这个reward的功能。agent就是根据这个reward反馈来改进自己的。</p>
+<p>上述想法暂时无法实现,因为我们其实没法对state这个随机变量求期望.我们只能用当前值,假想它就是均值结果(实际上并不是,只是无偏估计),这种方法叫做蒙特卡洛法.</p>
+<blockquote>
+<p>解释下:<br>蒙特卡洛法求期望就是:对于一个随机变量,和这个变量的概率密度函数,正经的期望应该是随机变量和概率密度函数乘积的积分.但概率密度函数未知,我们就不数值计算了,我们看这个黑箱的概率密度函数的抽样结果是什么,它抽出来什么我们就认为均值是什么.在这里,这个未知的概率密度函数就是状态转换函数.策略学习中多次(3次)用到蒙特卡洛法,所以还是需要整明白的.</p>
+</blockquote>
 <hr>
-<p><strong>我们在了解了agent，enviroment，action，state，reward这几个概念后，我们可以再把上面的过程描述一遍:</strong><br>此时刻的agent为了获得更大的reward,根据此时刻的state,做出此时刻的action;此时刻的enviroment根据预先定义好的规则,根据此时刻的state和action,更新出下一时刻的state,并给agent此时刻的reward;至此一个循环结束.<br>这个循环产生的’下一时刻的state’将被下一时刻的agent感知到,’此时刻的reward’可能会给下一时刻agent选择action提供参考.</p>
+<p><strong>于是我们用当前</strong>$s$<strong>的</strong>$V_{\pi}$<strong>,而不是所有</strong>$s$<strong>的</strong>$V_{\pi}$<strong>的均值,来作为价值函数网络参数</strong>$\theta$<strong>更新的标准:</strong></p>
+<blockquote>
+<p>$\theta_{t+1} &#x3D; \theta_t + \beta \cdot \frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta}|<em>{\theta &#x3D; \theta_t}$<br>$\frac{\partial V</em>{\pi}(s_t;\theta)}{\partial \theta} &#x3D; \sum_a Q_{\pi}(s_t,a) \frac{\partial \pi(a|s_t;\theta)}{\partial \theta}|_{\theta &#x3D; \theta_t}$</p>
+</blockquote>
+<p>如果$a$是离散的,我们就按照上式对每个$a$求值再求和就行.但如果$a$是连续的,我们一般这种求和就会变成积分,如果积分项里有PDF,那就成了求期望,如果无法解析地求期望,我们可以用蒙特卡洛的思想近似期望.以下公式就是通过一个巧妙的变换,把求积分问题又变成了求期望问题,最后用蒙特卡洛近似了:<br>$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta} &#x3D; \sum_a Q_{\pi}(s_t,a) \frac{\partial \pi(a|s_t;\theta)}{\partial \theta}|<em>{\theta &#x3D; \theta_t} &#x3D; \sum_a Q</em>{\pi}(s_t,a) \pi(a|s_t;\theta) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t} &#x3D; E_A[Q</em>{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t}] &#x3D; Q</em>{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|_{\theta&#x3D; \theta_t}$</p>
 <hr>
-<p><strong>看到这里应该明白:</strong><br>agent和enviroment交互的过程就是一个个循环的迭代,每一个循环包含四个环节.<br>分别是:</p>
+<p><strong>至此,我们有了训练策略网络的算法:</strong></p>
+<blockquote>
+<p>$q_t &#x3D; Q_{\pi}(s_t,a_t)$<br>$d_{\theta,t} &#x3D; \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|\theta &#x3D; \theta_t$<br>$g(a_t,\theta_t) &#x3D; q_t \cdot d_{\theta,t}$<br>$\theta_{t+1} &#x3D; \theta_t + \beta \cdot g(a_t,\theta_t)$</p>
+</blockquote>
+<p>好了,到此我们可以讨论$q_t$到底怎么来了.</p>
 <ol>
-<li>agent根据当前状态state(此后称为$s_t$),在动作空间中选取一个动作action(此后称为$a_t$)执行.</li>
-<li>enviroment根据当前状态$s_t$和当前agent动作$a_t$,进行状态更新得到$s_{t+1}$.</li>
-<li>enviroment根据当前状态$s_t$和当前agent动作$a_t$,给agent奖励$r_t$.</li>
-<li>agent根据历史信息，学习改变现有的选择action的策略（不一定有）</li>
+<li>如果我们一整轮都不更新,然后跑完整个trial,我们就知道每一步的$q_t$了,这也是一步蒙特卡洛.这种方法称为REINFORCE方法.</li>
+<li>我们也可以用价值学习中的价值网络来估计这个$q_t$,这种方法叫做Actor-Critic方法.</li>
 </ol>
-<hr>
-<p><strong>前三个环节都有明确的输入输出,我们就可以把他们看作广义的函数,在强化学习中,我们将其称为:</strong></p>
-<ol>
-<li><p>策略函数$\pi(a|s) &#x3D; P(A&#x3D;a|S&#x3D;s)$;策略函数是一个概率分布函数(PDF),需要随机抽样得到真正执行的$a_t$.</p>
-<blockquote>
-<p>补充细节：<br>上述策略函数为随机策略，还有确定策略。但一般我们都用随机策略，保留一定的探索机会，可能跳出局部最优，而且随机策略更适合博弈。</p>
-</blockquote>
-</li>
-<li><p>状态转移函数$p(s’|s,a)&#x3D;P(S’&#x3D;s’|S&#x3D;s,A&#x3D;a)$;状态转移函数也是一个PDF,需要随机抽样才能得到真正的状态更新$s_{t+1}$</p>
-<blockquote>
-<p>解释一下：<br>设计状态转移函数为概率分布函数感觉比较好解释,我们本来就无法对环境做精确的机理建模,当然应该允许概率的作用.</p>
-</blockquote>
-</li>
-<li><p>enviroment给agent的奖励规则没有多做介绍，一般是个确定性的映射关系。</p>
-<blockquote>
-<p>发现问题：<br>是否可以考虑对奖励规则进行些理论分析，应该已经有人做这些工作了吧</p>
-</blockquote>
-</li>
-</ol>
-<p>如你所见,这三个环节中,策略函数和奖励规则是我们可以改变的.我们的研究就开始于此.</p>
-<h2 id="强化学习核心思想"><a href="#强化学习核心思想" class="headerlink" title="强化学习核心思想"></a>强化学习核心思想</h2><p>对于强化学习,我个人的理解就是根据state选择合适的action,使得在任务结束时,agent获得的总reward最大.</p>
-<blockquote>
-<p>解释一下：<br>作为和监督&#x2F;无监督学习并行的机器学习一大分类，强化学习与监督学习的区别之一就是：没有明确的标签反馈告诉agent选择的action是否正确，agent获得的反馈只有状态转移造成的打分reward</p>
-</blockquote>
-<p><strong>首先,我们考虑我们评价策略policy或者动作action好坏的标准：</strong><br>我们知道，做一个action，就会有一个reward。那么我们是不是可以直接拿这个reward作为评判标准呐？</p>
-<blockquote>
-<p>这样做太短视了。我们都知道延迟满足的道理：我现在选择好好学习做好毕设，虽然现在有少许痛苦，但几个月后毕业时，我可以更轻松地玩耍（当前我的reward较小，但未来的reward会增长很多）。反过来，如果我现在选择随便浪，当前的reward可能稍微高点，但毕业时我的reward会狠狠地下跌。所以我们不仅要考虑当前的reward，还要考虑后面的reward。</p>
-</blockquote>
-<p>既然我们要通盘考虑，那能不能用整个试验trial的reward之和作为评判标准呐？</p>
-<blockquote>
-<p>这样做也不合适。因为在某个动作执行前的奖励，不是这个动作的结果。</p>
-</blockquote>
-<p>所以我们对t时刻的动作好坏的评判标准取为t时刻reward，及其以后所有reward的总和，我们称之为回报retrun：</p>
-<blockquote>
-<p>$U_t &#x3D; R_t + R_{t+1} + R_{t+2} + R_{t+3} + \cdots$</p>
-</blockquote>
-<p>在强化学习里,我们还不是直接用这个朴素的累计回报,而是用折扣累计回报:</p>
-<blockquote>
-<p>$U_t &#x3D; R_t + \gamma R_{t+1} + \gamma^2 R_{t+2} + \gamma^3 R_{t+3} + \cdots$</p>
-</blockquote>
-<p>这里，我们把$\gamma$叫做折扣率，取值区间在$[0,1]$之间。之所以我们要引入折扣率，是因为一个动作一般对相邻时刻影响大，越往后影响越小。如果每次的奖励都是一个数量级，当前的奖励就很容易被未来的奖励冲淡，所以我们就对未来的奖励打一个折扣，越未来，折扣越狠。引入这么一个意义明确超参数就多一个调参自由度。<br>此后，我们谈及回报return，都是指以上定义。</p>
-<hr>
-<p><strong>于是，我们有了新问题，我们的评价标准——return包含了现在和未来时刻的奖励reward，这个是未知量啊！？</strong><br>我们要仔细剖析上面这句话究竟是什么意思：<br>首先，为什么说现在时刻奖励$R_t$是未知的呐？因为$R_t$是$s_t$和$a_t$的函数，虽然此时$s_t$已知，但$a_t$未知。但还好，我们就是根据$R_t$选择$a_t$的。如果$a_t$是有限的，理论上一个个带入就好了。所以$R_t$不是问题。<br>首先，未来的$s_t$和$a_t$是真不知道，所以$R_{t+N}$之类的，还是随机变量。<br>对于随机变量，我们如果知道它的概率分布，也可以通过求期望的方式得到估计值：</p>
-<blockquote>
-<p>$E[f(x)] &#x3D; \int_x p(x) f(x) dx$</p>
-</blockquote>
-<p>巧了，动作变量$a$的概率分布函数就是策略函数$\pi(a|s)$，状态变量的概率分布函数就是状态转移函数$p(s’|s,a)$。</p>
-<blockquote>
-<p>解释一下:<br>我们后面并不会真的求期望来求解.因为就算这两个PDF也不是全部已知的.只是这样的数学定义便于我们后面用别的方法实现.</p>
-</blockquote>
-<p><strong>总之，通过上面这一串步骤，我们得到了对回报函数的估计，也就是动作价值函数：</strong></p>
-<blockquote>
-<p>$Q_{\pi}(s_t,a_t) &#x3D; E[U_t|S_t &#x3D; s_t,A_t &#x3D; a_t]$</p>
-</blockquote>
-<p>当前回报函数中，已知量$s_t$被动作价值函数通过传入参数获得了；当前回报函数中，未知量$a_t$也被动作价值函数通过传入参数获得了；当前回报函数中，未知量$s_{t+1},s_{t+2},s_{t+3},\cdots,a_{t+1},a_{t+2},a_{t+3},\cdots$都在求期望的过程中消掉了。当然需要你提前提供一个策略函数$\pi(a|s)$。因此我认为这个动作价值函数应被称为策略$\pi$下的动作价值函数。<br>动作价值函数实际上有三个输入。除了参数列表的两个外，还有策略函数这个输入。就算当前的$s$和$a$都相同，策略$\pi$不同，动作价值也不一定一样。我们取相同的$s$和$a$下，使得$Q_{\pi}$最大的$\pi$,此时的$Q_{\pi}$反应了当前$s$下选择$a$所可能取得的最大return.</p>
-<hr>
-<p><strong>这个最优动作价值函数,就是真正的动作打分函数：</strong></p>
-<blockquote>
-<p>$Q^*(s_t,a_t) &#x3D; \mathop{max}\limits_{\pi}Q_{\pi}(s_t,a_t)$</p>
-</blockquote>
-<p>agent在一定的$s$下,只要选择$Q^*$最大的$a$就行了.到这里我们发现，有点偏题了。本来是要探讨怎么选择$\pi(a|s)$，结果探讨出来了可以根据$Q^*(s_t,a_t)$选择$a_t$。不过这也不亏，实际上强化学习的一种实现就是价值学习：$a_t &#x3D; \mathop{argmax}\limits_{a}Q^*(s_t,a)$，还有一种实现是策略学习，也就是我们本想探讨的用$\pi(a|s)$的抽样结果得到$a_t$。<br>评价策略函数的标准,就是状态价值函数,或者应该称为策略$\pi$下的状态价值函数：</p>
-<blockquote>
-<p>$V_{\pi}(s_t) &#x3D; E_A[Q_{\pi}(s_t,a_t)]$</p>
-</blockquote>
-<p>其实就是当前状态下，对所有此刻可能的动作价值函数求期望，也就是你这个状态平均能取得怎样的回报。<br>它的含义是,此策略下,到达当前状态$s$时,赢面有多大.如果我们固定$s$,分别求每个$\pi$下的$V_{\pi}$，就可以比较出$\pi$的好坏。具体怎么做,留到策略学习一讲.</p>
-<h2 id="OpenAI-Gym的使用"><a href="#OpenAI-Gym的使用" class="headerlink" title="OpenAI Gym的使用"></a>OpenAI Gym的使用</h2><p>openAI Gym是强化学习的通用环境，非常好用。<br>网址为：<br><a target="_blank" rel="noopener" href="http://gym.openai.com/">http://gym.openai.com/</a><br>当时安装gym碰到点问题。后来就是管理员权限打开Anaconda Prompt。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install siwg<br>pip install gym[box2d]//这句我忘了对不对，反正运行第三句后，再运行脚本报错了这个，我就安了这个<br>pip install gym<br></code></pre></td></tr></table></figure>
-
-<p>主要跟的这个链接做的（已点赞，感谢！）：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34769201/article/details/95667042">https://blog.csdn.net/qq_34769201&#x2F;article&#x2F;details&#x2F;95667042</a></p>
+<p>单纯策略学习好像没有单纯价值学习好用.当然最好是直接走Actor-Critic方法,我们下一节介绍.</p>
 
                 
               </div>
@@ -423,8 +361,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>王树森强化学习网课-L01-基本概念</div>
-      <div>http://example.com/2023/03/16/王树森网课-L01-基本概念/</div>
+      <div>王树森强化学习网课-L03-策略学习</div>
+      <div>http://example.com/2023/03/16/王树森网课-L03-策略学习/</div>
     </div>
     <div class="license-meta">
       
@@ -468,18 +406,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L02-%E4%BB%B7%E5%80%BC%E5%AD%A6%E4%B9%A0/" title="王树森强化学习网课-L02-价值学习">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">王树森强化学习网课-L02-价值学习</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/15/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E01/" title="毕设求生日志-S01E01">
-                        <span class="hidden-mobile">毕设求生日志-S01E01</span>
+                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L02-%E4%BB%B7%E5%80%BC%E5%AD%A6%E4%B9%A0/" title="王树森强化学习网课-L02-价值学习">
+                        <span class="hidden-mobile">王树森强化学习网课-L02-价值学习</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
