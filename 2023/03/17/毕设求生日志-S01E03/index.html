@@ -14,26 +14,26 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Magic Chestnut">
-  <meta name="keywords" content="连续控制、确定策略梯度、参数化策略函数">
+  <meta name="keywords" content="日志、毕设、强化学习">
   
-    <meta name="description" content="之前我们所讨论的强化学习控制，不论是动作学习还是策略学习都是离散情况下的。比如说动作学习的输出是每个动作的分数，如果连续，肯定无法做到无穷维的输出；如果是策略学习，输出的是每个动作的概率值，再进行随机抽样，其实是离散的概率分布。所以我们需要单独讨论如何解决动作空间连续的问题。 方案1-连续动作空间离散化这是最显而易见的想法，但问题很大。首先是离散化存在精度降低的问题，其次如果总的动作空间是多个子动">
+    <meta name="description" content="今日工作简表 把王树森的课程笔记看完了，更新到了博客网站上  把党支部的各种材料都做好或者检查完了  EASY RL实体书看了前两节  卷腹、侧平举、还有一个用背的动作各两组   今日作息9：10起床的，和昨天一样哈哈。还做了一个噩梦，大概意思是我起床晚了，并且因此遭殃，一朋友起床早，躲过了，反而受益了，挺离谱的。而且我醒来一摸手机，正好那个朋友给我发了微信，当时吓了一跳。今天没起来，主要还是昨天">
 <meta property="og:type" content="article">
-<meta property="og:title" content="王树森强化学习网课-L12-连续控制">
-<meta property="og:url" content="http://example.com/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L12-%E8%BF%9E%E7%BB%AD%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:title" content="毕设求生日志-S01E03">
+<meta property="og:url" content="http://example.com/2023/03/17/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E03/index.html">
 <meta property="og:site_name" content="来看雪泥焗鸿爪">
-<meta property="og:description" content="之前我们所讨论的强化学习控制，不论是动作学习还是策略学习都是离散情况下的。比如说动作学习的输出是每个动作的分数，如果连续，肯定无法做到无穷维的输出；如果是策略学习，输出的是每个动作的概率值，再进行随机抽样，其实是离散的概率分布。所以我们需要单独讨论如何解决动作空间连续的问题。 方案1-连续动作空间离散化这是最显而易见的想法，但问题很大。首先是离散化存在精度降低的问题，其次如果总的动作空间是多个子动">
+<meta property="og:description" content="今日工作简表 把王树森的课程笔记看完了，更新到了博客网站上  把党支部的各种材料都做好或者检查完了  EASY RL实体书看了前两节  卷腹、侧平举、还有一个用背的动作各两组   今日作息9：10起床的，和昨天一样哈哈。还做了一个噩梦，大概意思是我起床晚了，并且因此遭殃，一朋友起床早，躲过了，反而受益了，挺离谱的。而且我醒来一摸手机，正好那个朋友给我发了微信，当时吓了一跳。今天没起来，主要还是昨天">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-17T08:47:49.433Z">
-<meta property="article:modified_time" content="2023-03-17T08:55:55.012Z">
+<meta property="article:published_time" content="2023-03-17T14:12:02.726Z">
+<meta property="article:modified_time" content="2023-03-17T14:47:37.934Z">
 <meta property="article:author" content="Magic Chestnut">
-<meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
+<meta property="article:tag" content="日志、毕设、强化学习、20岁还没发过SCI">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>王树森强化学习网课-L12-连续控制 - 来看雪泥焗鸿爪</title>
+  <title>毕设求生日志-S01E03 - 来看雪泥焗鸿爪</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="王树森强化学习网课-L12-连续控制"></span>
+            <span id="subtitle" data-typed-text="毕设求生日志-S01E03"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-17 16:47" pubdate>
-          2023年3月17日 下午
+        <time datetime="2023-03-17 22:12" pubdate>
+          2023年3月17日 晚上
         </time>
       </span>
     
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.4k 字
+          1.1k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          12 分钟
+          9 分钟
         
       </span>
     
@@ -283,15 +283,66 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">王树森强化学习网课-L12-连续控制</h1>
+            <h1 style="display: none">毕设求生日志-S01E03</h1>
             
             
               <div class="markdown-body">
                 
-                <p>之前我们所讨论的强化学习控制，不论是动作学习还是策略学习都是离散情况下的。比如说动作学习的输出是每个动作的分数，如果连续，肯定无法做到无穷维的输出；如果是策略学习，输出的是每个动作的概率值，再进行随机抽样，其实是离散的概率分布。所以我们需要单独讨论如何解决动作空间连续的问题。</p>
-<h1 id="方案1-连续动作空间离散化"><a href="#方案1-连续动作空间离散化" class="headerlink" title="方案1-连续动作空间离散化"></a>方案1-连续动作空间离散化</h1><p>这是最显而易见的想法，但问题很大。首先是离散化存在精度降低的问题，其次如果总的动作空间是多个子动作空间的组合（多自由度机械臂），那输出的维度会非常非常大，以至于无法训练。</p>
-<h1 id="方案2-确定策略梯度算法DPG"><a href="#方案2-确定策略梯度算法DPG" class="headerlink" title="方案2-确定策略梯度算法DPG"></a>方案2-确定策略梯度算法DPG</h1><p>DPG的策略函数$\pi(s;\theta)$和传统的策略函数$\pi(a|s;\theta)$不同，他的输出不再是概率分布，而直接就是动作本身。</p>
-<h1 id="方案3-参数化策略函数"><a href="#方案3-参数化策略函数" class="headerlink" title="方案3-参数化策略函数"></a>方案3-参数化策略函数</h1><p>因为神经网络输出还得是有限维度，或者说不太大的维度的东西，所以无法对连续空间每一个动作都给个概率，但我们可以考虑这些工作的概率满足某些经典的分布，比如正态分布，这样整个PDF就可以用均值$\mu$和方差$\sigma$描述了。<br>也就是我们需要神经网络去逼近正态分布的均值：$\mu_i(s_t) &#x3D; \mu_i(s_t;\theta^{\mu}<em>t)$，用神经网络去逼近方差的对数$\rho_i &#x3D; log(\sigma_i^2)$，$\rho_i(s_t) &#x3D; \rho_i(s_t;\theta^{\rho}<em>t)$。此时的策略函数为：$\pi(a_t|s_t;\theta^{\mu},\theta^{\rho})$。<br>其实我们用不到$\pi(a_t|s_t;\theta^{\mu},\theta^{\rho})$输出的PDF，因为只要$\mu_i(s_t)$和$\rho_i(s_t)$有了，就已经有了PDF。我们实际需要的是$\frac{\partial log(\pi(a_t|s_t,\theta))}{\partial \theta}$，其中$\theta$包含了$\theta^{\mu},\theta^{\rho}$。<br>根据正态分布的定义，我们知道$\pi(a|s;\theta^{\mu},\theta^{\rho}) &#x3D; \prod</em>{i&#x3D;1}^d \frac{1}{\sqrt{6.28}\sigma_i} exp(-\frac{(a_i-\mu_i)^2}{2\sigma_i^2})$，进而$ln(\pi(a_t|s_t;\theta)) &#x3D; \sum</em>{i&#x3D;1}^d (-ln\sigma_i - \frac{(a_i-\mu_i)^2} {2\sigma_i^2}) + const &#x3D; \sum_{i&#x3D;1}^d (-\frac{\rho_i}{2} - \frac{(a_i-\mu_i)^2} {2exp(\rho_i)}) + const &#x3D; f(s_t,a_t;\theta) + const$，所以$\frac{\partial log(\pi(a_t|s_t,\theta))}{\partial \theta} &#x3D; \frac{\partial f(s_t,a_t;\theta)}{\partial \theta}$，我们训练好$\theta$就行了，训练的方式和传统的一样。</p>
+                <h1 id="今日工作简表"><a href="#今日工作简表" class="headerlink" title="今日工作简表"></a>今日工作简表</h1><ul>
+<li><p>把王树森的课程笔记看完了，更新到了博客网站上</p>
+</li>
+<li><p>把党支部的各种材料都做好或者检查完了</p>
+</li>
+<li><p>EASY RL实体书看了前两节</p>
+</li>
+<li><p>卷腹、侧平举、还有一个用背的动作各两组</p>
+</li>
+</ul>
+<h1 id="今日作息"><a href="#今日作息" class="headerlink" title="今日作息"></a>今日作息</h1><p>9：10起床的，和昨天一样哈哈。还做了一个噩梦，大概意思是我起床晚了，并且因此遭殃，一朋友起床早，躲过了，反而受益了，挺离谱的。而且我醒来一摸手机，正好那个朋友给我发了微信，当时吓了一跳。今天没起来，主要还是昨天睡前看油管了哈哈，虽然看得不多，也就看到十二点。今天坚决不看！十一点睡觉。</p>
+<h1 id="大总结"><a href="#大总结" class="headerlink" title="大总结"></a>大总结</h1><h2 id="今日收获"><a href="#今日收获" class="headerlink" title="今日收获"></a>今日收获</h2><p>今天没能完成昨天目标，但还是很开心。</p>
+<ul>
+<li><p>整完了王树森的笔记，算是一个阶段性成功~~，有空路上或者吃饭的时候自己再串一下这里面的思路。</p>
+<blockquote>
+<p>具体来说。</p>
+<ul>
+<li><p>先看了价值学习的自举问题，target network和double dqn都是用两个网络，分别用于预测td target部分和action选择部分。target network直接多步更新一次，抑制正反馈，double dqn更进一步，预测td target部分用的action用原网络来选，进一步抑制。</p>
+</li>
+<li><p>再看了如何改进dqn的网络结果。也就是先定义一个优势函数&#x3D;动作价值-状态价值。然后动作价值就&#x3D;状态价值+优势函数-优势函数最大值或者均值。状态价值、优势函数分别俩网络，凑成一个网络，优势函数的均值是为了保证训练不走形。</p>
+</li>
+<li><p>还看了为啥引入baseline不影响均值，降低方差。</p>
+</li>
+<li><p>最后A2C算法就是结合了AC、baseline、advantage，ac原来的动作价值部分，都用状态价值代替了，前后动作价值只差又反应了advantage</p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p>EASY RL目前看到的有收获的部分，主要是第二章，介绍了马尔可夫决策。马尔科夫链MC马尔可夫过程MP很好理解，加上奖励就是马尔可夫奖励过程MRP，如果状态转移间，再加上一个状态到动作，动作到下一个状态的PDF过程，就是马尔科夫决策MDP。</p>
+<blockquote>
+<p>MDP和MRP之间差一个策略$\pi$ ，如果MDP五元组可知，那么所有状态价值理论上都是可以直接计算的。也可以给个初值一步步迭代，也就是动态规划。当前状态价值和下一步状态价值之间的关系就是贝尔曼函数。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="今日困惑"><a href="#今日困惑" class="headerlink" title="今日困惑"></a>今日困惑</h2><ul>
+<li>没太多困惑</li>
+</ul>
+<h2 id="仍需改进"><a href="#仍需改进" class="headerlink" title="仍需改进"></a>仍需改进</h2><ol>
+<li><p>作息。早上没起来，导致也没晨跑，也没有足够时间完成学习任务。</p>
+</li>
+<li><p>其他没啥哈哈，挺满意。虽然很多时间没学习，但有她自己的收获。</p>
+</li>
+</ol>
+<h2 id="列个计划"><a href="#列个计划" class="headerlink" title="列个计划"></a>列个计划</h2><p>明天：</p>
+<ul>
+<li><p>早起，给电车充电，把论文改完发群、把自我介绍发学弟、把讲座内容确定下。</p>
+</li>
+<li><p>中午先把晚上要讲的课给备好</p>
+</li>
+<li><p>晚饭前看完EASY RL前五章吧</p>
+</li>
+<li><p>晚上做保研PPT</p>
+</li>
+</ul>
+<h1 id="闲扯几句"><a href="#闲扯几句" class="headerlink" title="闲扯几句"></a>闲扯几句</h1><p>很有感觉，继续坚持！养成好习惯！</p>
 
                 
               </div>
@@ -310,7 +361,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="category-chain-item">强化学习入门</a>
+  <a href="/categories/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E7%BA%AA%E5%AE%9E/" class="category-chain-item">毕设求生纪实</a>
   
   
 
@@ -325,7 +376,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%81%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0%E3%80%81%E7%8E%8B%E6%A0%91%E6%A3%AE%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#强化学习、课程笔记、王树森、20岁还没发过SCI</a>
+        <a href="/tags/%E6%97%A5%E5%BF%97%E3%80%81%E6%AF%95%E8%AE%BE%E3%80%81%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#日志、毕设、强化学习、20岁还没发过SCI</a>
       
     </div>
   
@@ -337,8 +388,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>王树森强化学习网课-L12-连续控制</div>
-      <div>http://example.com/2023/03/17/王树森网课-L12-连续控制/</div>
+      <div>毕设求生日志-S01E03</div>
+      <div>http://example.com/2023/03/17/毕设求生日志-S01E03/</div>
     </div>
     <div class="license-meta">
       
@@ -382,18 +433,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/17/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E03/" title="毕设求生日志-S01E03">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">毕设求生日志-S01E03</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L11-A2C/" title="王树森强化学习网课-L11-A2C">
-                        <span class="hidden-mobile">王树森强化学习网课-L11-A2C</span>
+                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L12-%E8%BF%9E%E7%BB%AD%E6%8E%A7%E5%88%B6/" title="王树森强化学习网课-L12-连续控制">
+                        <span class="hidden-mobile">王树森强化学习网课-L12-连续控制</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
