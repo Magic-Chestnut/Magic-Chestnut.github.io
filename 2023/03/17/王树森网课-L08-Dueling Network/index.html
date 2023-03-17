@@ -14,26 +14,26 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Magic Chestnut">
-  <meta name="keywords" content="日志、毕设、强化学习">
+  <meta name="keywords" content="Advantage Function、Dueling Network">
   
-    <meta name="description" content="今日工作简表 看了王树森笔记的前几节，看到了高估问题  看了DataWhale的组队学习深度学习的预热直播   今日作息9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。 反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音">
+    <meta name="description" content="Dueling Network是DQN的替代品，之前介绍的DQN的所有改进方法都可以用在Dueling Network上。Dueling Network和DQN的区别就在于Dueling Network的网络结构和DQN不同，性能更好。 Advantage Function最优状态价值函数我们知道状态价值函数$V_{\pi}(s)$和策略$\pi$有关，那么肯定就存在一个最佳策略$\pi$使得此策">
 <meta property="og:type" content="article">
-<meta property="og:title" content="毕设求生日志-S01E02">
-<meta property="og:url" content="http://example.com/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/index.html">
+<meta property="og:title" content="王树森强化学习网课-L08-Dueling Network">
+<meta property="og:url" content="http://example.com/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L08-Dueling%20Network/index.html">
 <meta property="og:site_name" content="来看雪泥焗鸿爪">
-<meta property="og:description" content="今日工作简表 看了王树森笔记的前几节，看到了高估问题  看了DataWhale的组队学习深度学习的预热直播   今日作息9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。 反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音">
+<meta property="og:description" content="Dueling Network是DQN的替代品，之前介绍的DQN的所有改进方法都可以用在Dueling Network上。Dueling Network和DQN的区别就在于Dueling Network的网络结构和DQN不同，性能更好。 Advantage Function最优状态价值函数我们知道状态价值函数$V_{\pi}(s)$和策略$\pi$有关，那么肯定就存在一个最佳策略$\pi$使得此策">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-16T14:26:38.598Z">
-<meta property="article:modified_time" content="2023-03-16T14:50:19.482Z">
+<meta property="article:published_time" content="2023-03-17T08:13:25.666Z">
+<meta property="article:modified_time" content="2023-03-17T08:52:09.700Z">
 <meta property="article:author" content="Magic Chestnut">
-<meta property="article:tag" content="日志、毕设、强化学习、20岁还没发过SCI">
+<meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>毕设求生日志-S01E02 - 来看雪泥焗鸿爪</title>
+  <title>王树森强化学习网课-L08-Dueling Network - 来看雪泥焗鸿爪</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="毕设求生日志-S01E02"></span>
+            <span id="subtitle" data-typed-text="王树森强化学习网课-L08-Dueling Network"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-16 22:26" pubdate>
-          2023年3月16日 晚上
+        <time datetime="2023-03-17 16:13" pubdate>
+          2023年3月17日 下午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          730 字
+          1.8k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          7 分钟
+          15 分钟
         
       </span>
     
@@ -283,61 +283,27 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">毕设求生日志-S01E02</h1>
+            <h1 style="display: none">王树森强化学习网课-L08-Dueling Network</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="今日工作简表"><a href="#今日工作简表" class="headerlink" title="今日工作简表"></a>今日工作简表</h1><ul>
-<li><p>看了王树森笔记的前几节，看到了高估问题</p>
-</li>
-<li><p>看了DataWhale的组队学习深度学习的预热直播</p>
-</li>
-</ul>
-<h1 id="今日作息"><a href="#今日作息" class="headerlink" title="今日作息"></a>今日作息</h1><p>9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。</p>
-<p>反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音乐，到明天七点四十肯定已经睡够8h了，醒了直接就起，因为没有没睡够的理由了。</p>
-<h1 id="大总结"><a href="#大总结" class="headerlink" title="大总结"></a>大总结</h1><h2 id="今日收获"><a href="#今日收获" class="headerlink" title="今日收获"></a>今日收获</h2><p>虽然距离昨天定下的任务还差很多，但还是有些收获的。</p>
-<ul>
-<li><p>重新回顾了价值学习、策略学习、Actor-Critic、SARSA、QLearning、多步TD、优先经验回放都是些什么。</p>
-</li>
-<li><p>了解了深度学习学习路径。不要再看吴恩达、李飞飞了，看李沐的视频就行，比较新。然后pytorch也可以跟着他的视频开始。后面有时间跟着小甲鱼系统过python，然后学数据分析四个包，然后是刘二大人的pytorch</p>
-</li>
-</ul>
-<h2 id="今日困惑"><a href="#今日困惑" class="headerlink" title="今日困惑"></a>今日困惑</h2><ul>
-<li><p>为什么训练要让数据尽量没有相关性，尽量独立分布</p>
-</li>
-<li><p>为什么价值学习会出现高估问题</p>
-</li>
-</ul>
-<h2 id="仍需改进"><a href="#仍需改进" class="headerlink" title="仍需改进"></a>仍需改进</h2><ol>
-<li><p>作息。早上没起来，导致也没晨跑，也没有足够时间完成学习任务。</p>
-</li>
-<li><p>玩手机的时间太长。以后学习日，控制只在吃水果、健身的时候刷刷B站，中午上床千万别玩。</p>
-</li>
-</ol>
-<h2 id="列个计划"><a href="#列个计划" class="headerlink" title="列个计划"></a>列个计划</h2><p>明天：</p>
-<ul>
-<li><p>早期跑步</p>
-</li>
-<li><p>上午把党支部材料做完，交了</p>
-</li>
-<li><p>下午三点前把王树森的课程搞明白</p>
-</li>
-<li><p>下午五点前把视频做出来</p>
-</li>
-<li><p>晚上打听毕设，看一看学长的资料</p>
-</li>
-<li><p>最后把个人杂事给办了</p>
-</li>
-</ul>
-<p>近期：</p>
-<ul>
-<li><p>这周末两天，家教外，把PPT做完</p>
-</li>
-<li><p>下周二结束前，把EASY RL这本书搞懂，在理论上彻底入门RL</p>
-</li>
-</ul>
-<h1 id="闲扯几句"><a href="#闲扯几句" class="headerlink" title="闲扯几句"></a>闲扯几句</h1><p>别人都已经交初稿了！你一定要及其自律，提高效率，把进度赶上来！然后不要坚持特别稳的学习路线，要边学，边看论文了。</p>
+                <p>Dueling Network是DQN的替代品，之前介绍的DQN的所有改进方法都可以用在Dueling Network上。Dueling Network和DQN的区别就在于Dueling Network的网络结构和DQN不同，性能更好。</p>
+<h1 id="Advantage-Function"><a href="#Advantage-Function" class="headerlink" title="Advantage Function"></a>Advantage Function</h1><h2 id="最优状态价值函数"><a href="#最优状态价值函数" class="headerlink" title="最优状态价值函数"></a>最优状态价值函数</h2><p>我们知道状态价值函数$V_{\pi}(s)$和策略$\pi$有关，那么肯定就存在一个最佳策略$\pi$使得此策略下的状态价值函数值最大。这个策略下的状态价值函数就叫做最佳状态价值函数$V^*(s)$，即$V^*(s) &#x3D; \mathop{max}\limits_{\pi}V_{\pi}(s)$。它的表征了在状态$s$下，所有动作的价值均值最大能有多大。</p>
+<h2 id="优势函数"><a href="#优势函数" class="headerlink" title="优势函数"></a>优势函数</h2><p>优势函数$A^*(s,a) &#x3D; Q^*(s,a) - V^*(s)$，也就是最优动作价值与最优状态价值之差，表征的是采取动作$a$的最好结果和平均的最好结果能差多少。<br>王树森说这个优势函数最大也就能到0，即$\mathop{max}\limits_{a} A^*(s,a) &#x3D; 0$。</p>
+<blockquote>
+<p>问题<br>我不理解，按理说应该有动作比均值的得分高啊，为啥最大才是0？</p>
+</blockquote>
+<p>于是我们有：<br>$Q^*(s,a) &#x3D; V^*(s) + A^*(s,a) &#x3D; V^*(s) + A^*(s,a) - \mathop{max}\limits_{a} A^*(s,a)$<br>添加上$\mathop{max}\limits_{a} A^*(s,a)$看似可有可无这项，为什么？我们一会儿用到了再谈。</p>
+<h1 id="Dueling-Network"><a href="#Dueling-Network" class="headerlink" title="Dueling Network"></a>Dueling Network</h1><p>反正我们现在知道了最优动作价值函数的另一种表达式。如果我们用神经网络拟合$V^*(s)$和$A^*(s,a)$，那$Q^*(s,a)$就也被用神经网络表示了。即：<br>$q(s,a;\omega) &#x3D; q(s,a;\omega^v,\omega^a) &#x3D; V(s;\omega^v) + A(s,a;\omega^a) &#x3D; V(s;\omega^v) + A(s,a;\omega^a) - \mathop{max}\limits_{a} A(s,a;\omega^a)$<br>因为这一个神经网络$q(s,a;\omega)$其实包含了两个神经网络$V(s;\omega^v)$和$A(s,a;\omega^a)$，与DQN的“真一个”神经网络结构不同。所以被称为Dueling Network。对他的训练和用法，跟DQN一模一样，一模一样的，就只有搭神经网络的时候结构不一样。</p>
+<blockquote>
+<p>问题<br>为啥说Dueling Network结构比DQN要好呀？</p>
+</blockquote>
+<p><strong>为什么非要加上</strong>$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$<strong>看似可有可无这项呐？</strong><br>因为就算训练出来的两个网络$V(s;\omega^v)$和$A(s,a;\omega^a)$一个偏大，一个偏小，也能保证$q(s,a;\omega)$的结果八九不离十，但其实是不对的。你要说只要$q(s,a;\omega)$就行了呗，管他其他的。那我要说，强化学习不止有求价值函数这一步，其他步骤也可能需要，比如说价值函数$V(s;\omega^v)$。如果你把他训练跑偏了，其他步骤就乱套了。</p>
+<p>所以这个问题需要解决。我们只要加入一个$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$就可以理论上解决问题。因为理论上，如果$V(s;\omega^v)$和$A(s,a;\omega^a)$都训练好了，那$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$就是0；如果没训练好，那$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$的存在也可以保证训练不会停滞下去。<br>在实践上，采用$mean( A^*(s,a;\omega^a))$效果更好，即：<br>$q(s,a;\omega)  &#x3D; V(s;\omega^v) + A(s,a;\omega^a) - \mathop{max}\limits_{a} A(s,a;\omega^a)$<br>或<br>$q(s,a;\omega)  &#x3D; V(s;\omega^v) + A(s,a;\omega^a) - mean( A(s,a;\omega^a))$</p>
+<blockquote>
+<p>问题<br>用mean更好，我就更不明白为啥了。</p>
+</blockquote>
 
                 
               </div>
@@ -356,7 +322,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E7%BA%AA%E5%AE%9E/" class="category-chain-item">毕设求生纪实</a>
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="category-chain-item">强化学习入门</a>
   
   
 
@@ -371,7 +337,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E6%97%A5%E5%BF%97%E3%80%81%E6%AF%95%E8%AE%BE%E3%80%81%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#日志、毕设、强化学习、20岁还没发过SCI</a>
+        <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%81%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0%E3%80%81%E7%8E%8B%E6%A0%91%E6%A3%AE%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#强化学习、课程笔记、王树森、20岁还没发过SCI</a>
       
     </div>
   
@@ -383,8 +349,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>毕设求生日志-S01E02</div>
-      <div>http://example.com/2023/03/16/毕设求生日志-S01E02/</div>
+      <div>王树森强化学习网课-L08-Dueling Network</div>
+      <div>http://example.com/2023/03/17/王树森网课-L08-Dueling Network/</div>
     </div>
     <div class="license-meta">
       
@@ -396,7 +362,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月16日</div>
+          <div>2023年3月17日</div>
         </div>
       
       
@@ -428,9 +394,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/" title="王树森强化学习网课-L07-高估问题">
+                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L09-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6%E4%B8%AD%E7%9A%84Baseline/" title="王树森强化学习网课-L09-策略梯度中的Baseline">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">王树森强化学习网课-L07-高估问题</span>
+                        <span class="hidden-mobile">王树森强化学习网课-L09-策略梯度中的Baseline</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -438,8 +404,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L06-%E7%BB%8F%E9%AA%8C%E5%9B%9E%E6%94%BE/" title="王树森强化学习网课-L06-TD Learning">
-                        <span class="hidden-mobile">王树森强化学习网课-L06-TD Learning</span>
+                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/" title="王树森强化学习网课-L07-高估问题">
+                        <span class="hidden-mobile">王树森强化学习网课-L07-高估问题</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

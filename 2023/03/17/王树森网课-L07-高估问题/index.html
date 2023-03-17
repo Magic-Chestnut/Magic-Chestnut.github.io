@@ -14,26 +14,26 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Magic Chestnut">
-  <meta name="keywords" content="日志、毕设、强化学习">
+  <meta name="keywords" content="高估、TargetNetwork、Double DQN">
   
-    <meta name="description" content="今日工作简表 看了王树森笔记的前几节，看到了高估问题  看了DataWhale的组队学习深度学习的预热直播   今日作息9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。 反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音">
+    <meta name="description" content="问题来源其实，我们如果用之前讲过的东西进行价值学习，就一定会高估价值。高估问题的产生有两个来源：估计最值的偏移和自举。 对最值估计的偏移我们知道，根据梯度下降算法，我们此前所有的流程都在试图让对动作价值函数的估计逼近TD Target，但这个TD Target我们知道他并不是真实值，他只不过比单纯的估计多了几个真实的奖励而已。我们用最优动作价值函数举例：$q(s_t,a_t;\omega_t) &amp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="毕设求生日志-S01E02">
-<meta property="og:url" content="http://example.com/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/index.html">
+<meta property="og:title" content="王树森强化学习网课-L07-高估问题">
+<meta property="og:url" content="http://example.com/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="来看雪泥焗鸿爪">
-<meta property="og:description" content="今日工作简表 看了王树森笔记的前几节，看到了高估问题  看了DataWhale的组队学习深度学习的预热直播   今日作息9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。 反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音">
+<meta property="og:description" content="问题来源其实，我们如果用之前讲过的东西进行价值学习，就一定会高估价值。高估问题的产生有两个来源：估计最值的偏移和自举。 对最值估计的偏移我们知道，根据梯度下降算法，我们此前所有的流程都在试图让对动作价值函数的估计逼近TD Target，但这个TD Target我们知道他并不是真实值，他只不过比单纯的估计多了几个真实的奖励而已。我们用最优动作价值函数举例：$q(s_t,a_t;\omega_t) &amp;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-16T14:26:38.598Z">
-<meta property="article:modified_time" content="2023-03-16T14:50:19.482Z">
+<meta property="article:published_time" content="2023-03-17T08:03:40.838Z">
+<meta property="article:modified_time" content="2023-03-17T08:51:04.584Z">
 <meta property="article:author" content="Magic Chestnut">
-<meta property="article:tag" content="日志、毕设、强化学习、20岁还没发过SCI">
+<meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>毕设求生日志-S01E02 - 来看雪泥焗鸿爪</title>
+  <title>王树森强化学习网课-L07-高估问题 - 来看雪泥焗鸿爪</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="毕设求生日志-S01E02"></span>
+            <span id="subtitle" data-typed-text="王树森强化学习网课-L07-高估问题"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-16 22:26" pubdate>
-          2023年3月16日 晚上
+        <time datetime="2023-03-17 16:03" pubdate>
+          2023年3月17日 下午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          730 字
+          2.8k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          7 分钟
+          24 分钟
         
       </span>
     
@@ -283,61 +283,41 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">毕设求生日志-S01E02</h1>
+            <h1 style="display: none">王树森强化学习网课-L07-高估问题</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="今日工作简表"><a href="#今日工作简表" class="headerlink" title="今日工作简表"></a>今日工作简表</h1><ul>
-<li><p>看了王树森笔记的前几节，看到了高估问题</p>
-</li>
-<li><p>看了DataWhale的组队学习深度学习的预热直播</p>
-</li>
-</ul>
-<h1 id="今日作息"><a href="#今日作息" class="headerlink" title="今日作息"></a>今日作息</h1><p>9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。</p>
-<p>反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音乐，到明天七点四十肯定已经睡够8h了，醒了直接就起，因为没有没睡够的理由了。</p>
-<h1 id="大总结"><a href="#大总结" class="headerlink" title="大总结"></a>大总结</h1><h2 id="今日收获"><a href="#今日收获" class="headerlink" title="今日收获"></a>今日收获</h2><p>虽然距离昨天定下的任务还差很多，但还是有些收获的。</p>
-<ul>
-<li><p>重新回顾了价值学习、策略学习、Actor-Critic、SARSA、QLearning、多步TD、优先经验回放都是些什么。</p>
-</li>
-<li><p>了解了深度学习学习路径。不要再看吴恩达、李飞飞了，看李沐的视频就行，比较新。然后pytorch也可以跟着他的视频开始。后面有时间跟着小甲鱼系统过python，然后学数据分析四个包，然后是刘二大人的pytorch</p>
-</li>
-</ul>
-<h2 id="今日困惑"><a href="#今日困惑" class="headerlink" title="今日困惑"></a>今日困惑</h2><ul>
-<li><p>为什么训练要让数据尽量没有相关性，尽量独立分布</p>
-</li>
-<li><p>为什么价值学习会出现高估问题</p>
-</li>
-</ul>
-<h2 id="仍需改进"><a href="#仍需改进" class="headerlink" title="仍需改进"></a>仍需改进</h2><ol>
-<li><p>作息。早上没起来，导致也没晨跑，也没有足够时间完成学习任务。</p>
-</li>
-<li><p>玩手机的时间太长。以后学习日，控制只在吃水果、健身的时候刷刷B站，中午上床千万别玩。</p>
-</li>
+                <h1 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h1><p>其实，我们如果用之前讲过的东西进行价值学习，就一定会高估价值。高估问题的产生有两个来源：估计最值的偏移和自举。</p>
+<h2 id="对最值估计的偏移"><a href="#对最值估计的偏移" class="headerlink" title="对最值估计的偏移"></a>对最值估计的偏移</h2><p>我们知道，根据梯度下降算法，我们此前所有的流程都在试图让对动作价值函数的估计逼近TD Target，但这个TD Target我们知道他并不是真实值，他只不过比单纯的估计多了几个真实的奖励而已。我们用最优动作价值函数举例：<br>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$<br>其中如果$q(s_t,a_t;\omega_t)$相比真实值有什么偏差，那偏差一定来源于同样未知的$\mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$。也就是我们需要考虑$\mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$和$\mathop{max}\limits_{a}Q^*(s_{t+1},a)$有什么区别。<br>我们这样考虑：<br>假如$q$已经能逼近$Q^*$，也就是大体趋势一致，但不能保证每个毛刺都一样，或者说$q$是$Q^*$叠加0均值的高斯噪声。那么这时：$E[q] &#x3D; E[Q^*];max(q) \geq max(Q^*);min(q) \leq min(Q^*)$。</p>
+<blockquote>
+<p>问题<br>其实我觉得这个叠加噪声后，最大值变大的说法不可靠</p>
+</blockquote>
+<p>于是：</p>
+<ol>
+<li>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t) \geq r_t + \gamma \cdot \mathop{max}\limits_{a}Q^*(s_{t+1},a)$</li>
+<li>$Q^*(s_t,a_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}Q^*(s_{t+1},a)$</li>
+<li>$q(s_t,a_t;\omega_t) \geq Q^*(s_t,a_t)$</li>
 </ol>
-<h2 id="列个计划"><a href="#列个计划" class="headerlink" title="列个计划"></a>列个计划</h2><p>明天：</p>
-<ul>
-<li><p>早期跑步</p>
-</li>
-<li><p>上午把党支部材料做完，交了</p>
-</li>
-<li><p>下午三点前把王树森的课程搞明白</p>
-</li>
-<li><p>下午五点前把视频做出来</p>
-</li>
-<li><p>晚上打听毕设，看一看学长的资料</p>
-</li>
-<li><p>最后把个人杂事给办了</p>
-</li>
-</ul>
-<p>近期：</p>
-<ul>
-<li><p>这周末两天，家教外，把PPT做完</p>
-</li>
-<li><p>下周二结束前，把EASY RL这本书搞懂，在理论上彻底入门RL</p>
-</li>
-</ul>
-<h1 id="闲扯几句"><a href="#闲扯几句" class="headerlink" title="闲扯几句"></a>闲扯几句</h1><p>别人都已经交初稿了！你一定要及其自律，提高效率，把进度赶上来！然后不要坚持特别稳的学习路线，要边学，边看论文了。</p>
+<p>所以问题出在把$a^*$带入$q(s_{t+1},a^*;\omega_t)$的过程中会导致$y_t$偏大。</p>
+<h2 id="自举"><a href="#自举" class="headerlink" title="自举"></a>自举</h2><p>自举，Bootstrapping，就是用一个估计过程产生的估计值去更新同一个估计过程，using an estimated value in the update step for the same kind of estimated value。<br>其实在这里就是描述$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$中，用$q(s_{t+1},a;\omega_t)$去更新$q(s_t,a_t;\omega_t)$的行为。如果某一次$q(s_{t+1},a;\omega_t)$的偏大，那么它更新出的$q(s_t,a_t;\omega_t)$也就偏大。$q(s_t,a_t;\omega_t)$这一次的偏大是表面，但更深层次地，它其实是导致了$\omega_t$更倾向于让$q$偏大，这就导致下一轮的$q(s_{t+1},a;\omega_t)$可能更大。一轮轮循环下来，你会发现他真就实现了自举（自己左脚踩右脚，螺旋升天），也就是正反馈。</p>
+<blockquote>
+<p>补充：<br>那感觉如果初值偏小，后期也会偏小</p>
+</blockquote>
+<p>至此，我们知道。对Q的估计偏大的原因来源于两个方面。取最值操作造成的$y_t$偏大是根本原因，罪魁祸首。而自举，也就是更新结构导致的正反馈会造成偏差随着迭代会越来越夸张。</p>
+<h2 id="高估的危害"><a href="#高估的危害" class="headerlink" title="高估的危害"></a>高估的危害</h2><p>如果每个动作的价值都被均等高估，其实没事。因为我们的目标不是给出准确的价值估计，而是选出价值最高的动作。如果所有动作价值均等增大，那么价值最大的动作还是价值最大的动作。可我们一般都要用优先经验回放策略，这就导致了不同的经验被抽取的次数不同。被抽取的越多，正反馈迭代次数就越多，这个动作的价值就被拉高地越多。这就导致了不均匀高估。<br>我们总结下：</p>
+<ol>
+<li>高估的起因是取最值导致初始高估，但一定程度的初始高估没问题，大家都被高估，相当于都没被高估</li>
+<li>高估的放大因素是自举，迭代一次自举一次，不均匀抽样带来不同动作不同的迭代次数，也就造成了不均匀高估，影响到了实验结果</li>
+</ol>
+<p>下面我们看，解决高估，其实是不均匀高估的一些策略</p>
+<h1 id="引入Target-network"><a href="#引入Target-network" class="headerlink" title="引入Target network"></a>引入Target network</h1><p>这种方法旨在部分解决自举。他是这么做的：<br>引入一个新网络$q(s,a;\omega^-)$来在每一次计算$y_t$时负责估计$Q^*(s_{t+1},a)$，即：<br>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a,\omega^-_t)$<br>这个$\omega^-$怎么初始化和更新呐？<br>初始化可以直接用$\omega$初始化。更新如果每轮都用$\omega$更新，那就和原来一模一样，脱裤子放屁了。所以它为了拖延自举，用了个挺傻的方法，我隔个几轮再更新一次。更新的时候可以用用$\omega$直接赋值，也可以用一节惯性的方法：$\omega^- &#x3D; \tau \omega + (1-\tau)\omega^-$。<br>这种方法只能延迟自举，而且可能不太稳定。</p>
+<h1 id="Double-DQN"><a href="#Double-DQN" class="headerlink" title="Double DQN"></a>Double DQN</h1><p>Double DQN方法是对单纯地引入Target network的改进，并没有根除Target network的局限。<br>它相对于Target network唯一的改进就在于把$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a,\omega^-_t)$拆成了两步：</p>
+<ol>
+<li>$a^* &#x3D; \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$</li>
+<li>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot q(s_{t+1},a^*,\omega^-_t)$</li>
+</ol>
+<p>他好在哪呐？$\omega_t$网络选出的最高价值动作，在$\omega_t^-$网络眼里不一定是最高价值动作，$\omega_t^-$网络眼里的最高价值动作一定是他自己比较出来的最高价值动作。即：<br>$q(s_{t+1},a^*;\omega_t^-) \leq \mathop{max}\limits_{a} q(s_{t+1},a;\omega_t^-) \leq \mathop{max}\limits_{a} q(s_{t+1},a;\omega_t)$<br>也就是说，进一步抑制了自举。<br>所以Double DQN，好于直接引入Target network，好于什么都不做。</p>
 
                 
               </div>
@@ -356,7 +336,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E7%BA%AA%E5%AE%9E/" class="category-chain-item">毕设求生纪实</a>
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="category-chain-item">强化学习入门</a>
   
   
 
@@ -371,7 +351,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E6%97%A5%E5%BF%97%E3%80%81%E6%AF%95%E8%AE%BE%E3%80%81%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#日志、毕设、强化学习、20岁还没发过SCI</a>
+        <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%81%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0%E3%80%81%E7%8E%8B%E6%A0%91%E6%A3%AE%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#强化学习、课程笔记、王树森、20岁还没发过SCI</a>
       
     </div>
   
@@ -383,8 +363,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>毕设求生日志-S01E02</div>
-      <div>http://example.com/2023/03/16/毕设求生日志-S01E02/</div>
+      <div>王树森强化学习网课-L07-高估问题</div>
+      <div>http://example.com/2023/03/17/王树森网课-L07-高估问题/</div>
     </div>
     <div class="license-meta">
       
@@ -396,7 +376,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月16日</div>
+          <div>2023年3月17日</div>
         </div>
       
       
@@ -428,9 +408,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/" title="王树森强化学习网课-L07-高估问题">
+                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L08-Dueling%20Network/" title="王树森强化学习网课-L08-Dueling Network">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">王树森强化学习网课-L07-高估问题</span>
+                        <span class="hidden-mobile">王树森强化学习网课-L08-Dueling Network</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -438,8 +418,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L06-%E7%BB%8F%E9%AA%8C%E5%9B%9E%E6%94%BE/" title="王树森强化学习网课-L06-TD Learning">
-                        <span class="hidden-mobile">王树森强化学习网课-L06-TD Learning</span>
+                      <a href="/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/" title="毕设求生日志-S01E02">
+                        <span class="hidden-mobile">毕设求生日志-S01E02</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

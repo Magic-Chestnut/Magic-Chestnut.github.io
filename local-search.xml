@@ -4,6 +4,156 @@
   
   
   <entry>
+    <title>王树森强化学习网课-L12-连续控制</title>
+    <link href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L12-%E8%BF%9E%E7%BB%AD%E6%8E%A7%E5%88%B6/"/>
+    <url>/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L12-%E8%BF%9E%E7%BB%AD%E6%8E%A7%E5%88%B6/</url>
+    
+    <content type="html"><![CDATA[<p>之前我们所讨论的强化学习控制，不论是动作学习还是策略学习都是离散情况下的。比如说动作学习的输出是每个动作的分数，如果连续，肯定无法做到无穷维的输出；如果是策略学习，输出的是每个动作的概率值，再进行随机抽样，其实是离散的概率分布。所以我们需要单独讨论如何解决动作空间连续的问题。</p><h1 id="方案1-连续动作空间离散化"><a href="#方案1-连续动作空间离散化" class="headerlink" title="方案1-连续动作空间离散化"></a>方案1-连续动作空间离散化</h1><p>这是最显而易见的想法，但问题很大。首先是离散化存在精度降低的问题，其次如果总的动作空间是多个子动作空间的组合（多自由度机械臂），那输出的维度会非常非常大，以至于无法训练。</p><h1 id="方案2-确定策略梯度算法DPG"><a href="#方案2-确定策略梯度算法DPG" class="headerlink" title="方案2-确定策略梯度算法DPG"></a>方案2-确定策略梯度算法DPG</h1><p>DPG的策略函数$\pi(s;\theta)$和传统的策略函数$\pi(a|s;\theta)$不同，他的输出不再是概率分布，而直接就是动作本身。</p><h1 id="方案3-参数化策略函数"><a href="#方案3-参数化策略函数" class="headerlink" title="方案3-参数化策略函数"></a>方案3-参数化策略函数</h1><p>因为神经网络输出还得是有限维度，或者说不太大的维度的东西，所以无法对连续空间每一个动作都给个概率，但我们可以考虑这些工作的概率满足某些经典的分布，比如正态分布，这样整个PDF就可以用均值$\mu$和方差$\sigma$描述了。<br>也就是我们需要神经网络去逼近正态分布的均值：$\mu_i(s_t) &#x3D; \mu_i(s_t;\theta^{\mu}<em>t)$，用神经网络去逼近方差的对数$\rho_i &#x3D; log(\sigma_i^2)$，$\rho_i(s_t) &#x3D; \rho_i(s_t;\theta^{\rho}<em>t)$。此时的策略函数为：$\pi(a_t|s_t;\theta^{\mu},\theta^{\rho})$。<br>其实我们用不到$\pi(a_t|s_t;\theta^{\mu},\theta^{\rho})$输出的PDF，因为只要$\mu_i(s_t)$和$\rho_i(s_t)$有了，就已经有了PDF。我们实际需要的是$\frac{\partial log(\pi(a_t|s_t,\theta))}{\partial \theta}$，其中$\theta$包含了$\theta^{\mu},\theta^{\rho}$。<br>根据正态分布的定义，我们知道$\pi(a|s;\theta^{\mu},\theta^{\rho}) &#x3D; \prod</em>{i&#x3D;1}^d \frac{1}{\sqrt{6.28}\sigma_i} exp(-\frac{(a_i-\mu_i)^2}{2\sigma_i^2})$，进而$ln(\pi(a_t|s_t;\theta)) &#x3D; \sum</em>{i&#x3D;1}^d (-ln\sigma_i - \frac{(a_i-\mu_i)^2} {2\sigma_i^2}) + const &#x3D; \sum_{i&#x3D;1}^d (-\frac{\rho_i}{2} - \frac{(a_i-\mu_i)^2} {2exp(\rho_i)}) + const &#x3D; f(s_t,a_t;\theta) + const$，所以$\frac{\partial log(\pi(a_t|s_t,\theta))}{\partial \theta} &#x3D; \frac{\partial f(s_t,a_t;\theta)}{\partial \theta}$，我们训练好$\theta$就行了，训练的方式和传统的一样。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>王树森强化学习网课-L11-A2C</title>
+    <link href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L11-A2C/"/>
+    <url>/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L11-A2C/</url>
+    
+    <content type="html"><![CDATA[<p>所谓A2C一个特点把baseline这个技巧运用于Actor Critic，baseline的引入体现了$a$带来的advantage。</p><hr><p>原本的AC中，C是指动作价值函数$Q_{\pi}(s_t,a_t)$，我们用神经网络近似$Q(s_t,a_t;\omega_t)$，TD Target计算公式为：$y_t &#x3D; r_t + \gamma \cdot \mathop{arg} \limits_{max} Q(s_{t+1},a;\omega_t)$。<br>A2C中TD Target计算公式为：$y_t &#x3D; r_t + \gamma \cdot V(s_{t+1})$，后面$V(s_{t+1})$用神经网络表示。<br>这样的话，再考虑baseline，策略网络中微分步骤就变成了：<br>$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta} &#x3D; \frac{\partial log(\pi(s_t,a_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t} \cdot (r_t + \gamma \cdot V(s</em>{t+1};\omega) - V(s_t;\omega))$<br>因为虽然$r_t + \gamma \cdot V(s_{t+1};\omega)$和$V(s_t;\omega)$表示的都是对$V_{\pi}(s_t)$的估计，但是前者的$r_t$代表了动作$a_t$对估计的影响，所以他俩之差表现了$a_t$给当前状态带来的优势advantage，所以被称为advantage actor critic算法。</p><p>同样是状态价值网络，在A2C中发挥了评价动作好坏的作用，在reinforcement中只有降低方差的作用。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>王树森强化学习网课-L10-Reinforcement With Baseline</title>
+    <link href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L10-Reinforcement%20with%20Baseline/"/>
+    <url>/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L10-Reinforcement%20with%20Baseline/</url>
+    
+    <content type="html"><![CDATA[<p>第三课我们学习策略学习的时候发现了一个问题：$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta}|<em>{\theta &#x3D; \theta_t} &#x3D; Q</em>{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}$中的$Q_{\pi}(s_t,a)$我们并不知道。当时提出了两种方法，一种是用神经网络逼近，这种方法就是Actor-Critic Method，还有一种就是用$u_t$作为他的蒙特卡洛近似，缺点就是不能每一轮都进行更新，必须等到每一次任务结束才知道$u_t$，才能去更新参数，我们叫他REINFORCE方法。<br>此外，我们在第九课中学习了baseline这个小技巧，他可以在不影响蒙特卡洛近似的期望的同时，减小方差。我们现在就将baseline技巧，结合Reinforcement方法进行策略学习：<br><strong>首先选择合适的baseline</strong><br>王树森选择的baseline是$V_{\pi}(s_t)$，我觉得其他的baseline应该也是没问题的。现在的问题是baseline$V_{\pi}(s_t)$也是未知的。他又整了一个神经网络来近似，即$V(s_t;\omega)$。</p><blockquote><p>问题：<br>为啥又要弄一个神经网络，直接用$V_{\pi}(s_t;\theta)$不香吗？虽然$V_{\pi}(s_t;\theta)$未知，但是也可以蒙特卡洛吧。变成$u_t \pi(a_t|s_t;\theta)$</p></blockquote><p><strong>然后我得保证对baseline的逼近逼近于baseline</strong><br>那就得找个靶子，真实的basline我们也不知道，所以又要用蒙特卡洛给baseline找靶子，也就是$u_t$，因为$U_t$对$a_t$的期望就是$V_{\pi}(s_t)$。据此，我们定义逼近误差：$\delta_t &#x3D; V(s_t;\omega_t) - u_t$，我们希望通过更新$\omega$参数使得$\delta$更小，所以更新率为：$\omega_{t+1} &#x3D; \omega_t - \alpha \delta_t \frac{\partial V(s_t;\omega)}{\partial \omega}|<em>{\omega &#x3D; \omega_t}$。<br>接下来考虑更新$\theta$参数，使得$V</em>{\pi}(s_t;\theta)$更大。也就是$\theta_{t+1} &#x3D; \theta_t + \beta \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t} (u_t - V(s_t;\omega)) &#x3D; \theta_t - \beta \delta_t \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|</em>{\theta &#x3D; \theta_t}$<br><strong>就是这样</strong></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>王树森强化学习网课-L09-策略梯度中的Baseline</title>
+    <link href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L09-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6%E4%B8%AD%E7%9A%84Baseline/"/>
+    <url>/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L09-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6%E4%B8%AD%E7%9A%84Baseline/</url>
+    
+    <content type="html"><![CDATA[<p>曾经，在第三课我们谈策略学习的时候，提到过baseline。我们简单回忆下：<br>我们根据定义一步一步走，可以推出策略网络参数的更新律为：$\theta_{t+1} &#x3D; \theta_t + \beta \cdot Q_{\pi}(s_t,a_t)d_{\theta,t}$。<br>但我们也可以用带baseline的更新律：$\theta_{t+1} &#x3D; \theta_t + \beta \cdot （Q_{\pi}(s_t,a_t) - y_t) d_{\theta,t}$，我们把$y_t$叫baseline。<br>为什么可以凭空引入这么一个数，而且还有降低方差的作用呐？我们从更早的地方开始发掘。</p><p>策略学习，学习的是策略网络$\pi(a|s;\theta)$中的参数$\theta$。学习策略网络的依据是状态价值函数$V_{\pi}(s) &#x3D; E_a[Q_{\pi}(s,a)] &#x3D; \sum_{a} \pi(a|s) \cdot Q_{\pi}(s,a)$。所以我们对状态价值函数网络$V_{\pi}(s;\theta) &#x3D; E_a[Q_{\pi}(s,a)] &#x3D; \sum_{a} \pi(a|s;\theta) \cdot Q_{\pi}(s,a)$求对参数$\theta$的偏导来计算梯度，即：$\frac{\partial V_{\pi}(s;\theta)}{\partial \theta} &#x3D; \sum_{a} Q_{\pi}(s,a)  \frac{\partial \pi(a|s;\theta)}{\partial \theta}$。<br>如果我们此时，对$Q_{\pi}(s,a)$减一个数$d$，这个$d$与动作随机变量$a$没有关系，会发生什么情况？也就是在上述的$\frac{\partial V_{\pi}(s;\theta)}{\partial \theta}$基础上，再减去一个$\sum_{a} d \cdot \frac{\partial \pi(a|s;\theta)}{\partial}$会是什么情况。你会惊喜的发现$\sum_{a} d \cdot \frac{\partial \pi(a|s;\theta)}{\partial \theta} &#x3D; d \sum_{a} \cdot \frac{\partial \pi(a|s;\theta)}{\partial \theta} &#x3D; d \frac{\partial \sum_{a} \pi(a|s;\theta)}{\partial \theta} &#x3D; d \frac{\partial 1}{\partial \theta} &#x3D; 0$。是的，并不会有任何影响。<br>所以我们说$\frac{\partial V_{\pi}(s;\theta)}{\partial \theta} &#x3D; \sum_{a} Q_{\pi}(s,a)  \frac{\partial \pi(a|s;\theta)}{\partial \theta} &#x3D; \frac{\partial V_{\pi}(s;\theta)}{\partial \theta} &#x3D; \sum_{a} (Q_{\pi}(s,a) - d)  \frac{\partial \pi(a|s;\theta)}{\partial \theta}$。</p><p>但既然没影响，我们为啥要减去baseline呐？因为上述只是理论上的，别忘了我们求不了真期望，我们用的是蒙特卡洛期望，也即是用实际得到的动作$a$代替随机变量$a$。虽然这么做是无偏估计，但如果$a$值抽样的不同，求得的梯度就也不同，存在方差。我们希望减小方差，就可以削弱一部分增益。$Q_{\pi}(s,a)$就是对变化的放大增益，我们取一个接近于它的$d$，就可以削弱增益，降低方差了。这就是策略梯度中baseline的意义。</p><p>在此意义下，baseline可以取：</p><ol><li>0；没有baseline，不太好的情况</li><li>$y_t$；对他的估计肯定接近于它，可做baseline</li><li>$V_{\pi}(s)$；对他的均值也肯定接近于它，可做baseline</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>王树森强化学习网课-L08-Dueling Network</title>
+    <link href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L08-Dueling%20Network/"/>
+    <url>/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L08-Dueling%20Network/</url>
+    
+    <content type="html"><![CDATA[<p>Dueling Network是DQN的替代品，之前介绍的DQN的所有改进方法都可以用在Dueling Network上。Dueling Network和DQN的区别就在于Dueling Network的网络结构和DQN不同，性能更好。</p><h1 id="Advantage-Function"><a href="#Advantage-Function" class="headerlink" title="Advantage Function"></a>Advantage Function</h1><h2 id="最优状态价值函数"><a href="#最优状态价值函数" class="headerlink" title="最优状态价值函数"></a>最优状态价值函数</h2><p>我们知道状态价值函数$V_{\pi}(s)$和策略$\pi$有关，那么肯定就存在一个最佳策略$\pi$使得此策略下的状态价值函数值最大。这个策略下的状态价值函数就叫做最佳状态价值函数$V^*(s)$，即$V^*(s) &#x3D; \mathop{max}\limits_{\pi}V_{\pi}(s)$。它的表征了在状态$s$下，所有动作的价值均值最大能有多大。</p><h2 id="优势函数"><a href="#优势函数" class="headerlink" title="优势函数"></a>优势函数</h2><p>优势函数$A^*(s,a) &#x3D; Q^*(s,a) - V^*(s)$，也就是最优动作价值与最优状态价值之差，表征的是采取动作$a$的最好结果和平均的最好结果能差多少。<br>王树森说这个优势函数最大也就能到0，即$\mathop{max}\limits_{a} A^*(s,a) &#x3D; 0$。</p><blockquote><p>问题<br>我不理解，按理说应该有动作比均值的得分高啊，为啥最大才是0？</p></blockquote><p>于是我们有：<br>$Q^*(s,a) &#x3D; V^*(s) + A^*(s,a) &#x3D; V^*(s) + A^*(s,a) - \mathop{max}\limits_{a} A^*(s,a)$<br>添加上$\mathop{max}\limits_{a} A^*(s,a)$看似可有可无这项，为什么？我们一会儿用到了再谈。</p><h1 id="Dueling-Network"><a href="#Dueling-Network" class="headerlink" title="Dueling Network"></a>Dueling Network</h1><p>反正我们现在知道了最优动作价值函数的另一种表达式。如果我们用神经网络拟合$V^*(s)$和$A^*(s,a)$，那$Q^*(s,a)$就也被用神经网络表示了。即：<br>$q(s,a;\omega) &#x3D; q(s,a;\omega^v,\omega^a) &#x3D; V(s;\omega^v) + A(s,a;\omega^a) &#x3D; V(s;\omega^v) + A(s,a;\omega^a) - \mathop{max}\limits_{a} A(s,a;\omega^a)$<br>因为这一个神经网络$q(s,a;\omega)$其实包含了两个神经网络$V(s;\omega^v)$和$A(s,a;\omega^a)$，与DQN的“真一个”神经网络结构不同。所以被称为Dueling Network。对他的训练和用法，跟DQN一模一样，一模一样的，就只有搭神经网络的时候结构不一样。</p><blockquote><p>问题<br>为啥说Dueling Network结构比DQN要好呀？</p></blockquote><p><strong>为什么非要加上</strong>$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$<strong>看似可有可无这项呐？</strong><br>因为就算训练出来的两个网络$V(s;\omega^v)$和$A(s,a;\omega^a)$一个偏大，一个偏小，也能保证$q(s,a;\omega)$的结果八九不离十，但其实是不对的。你要说只要$q(s,a;\omega)$就行了呗，管他其他的。那我要说，强化学习不止有求价值函数这一步，其他步骤也可能需要，比如说价值函数$V(s;\omega^v)$。如果你把他训练跑偏了，其他步骤就乱套了。</p><p>所以这个问题需要解决。我们只要加入一个$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$就可以理论上解决问题。因为理论上，如果$V(s;\omega^v)$和$A(s,a;\omega^a)$都训练好了，那$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$就是0；如果没训练好，那$\mathop{max}\limits_{a} A^*(s,a;\omega^a)$的存在也可以保证训练不会停滞下去。<br>在实践上，采用$mean( A^*(s,a;\omega^a))$效果更好，即：<br>$q(s,a;\omega)  &#x3D; V(s;\omega^v) + A(s,a;\omega^a) - \mathop{max}\limits_{a} A(s,a;\omega^a)$<br>或<br>$q(s,a;\omega)  &#x3D; V(s;\omega^v) + A(s,a;\omega^a) - mean( A(s,a;\omega^a))$</p><blockquote><p>问题<br>用mean更好，我就更不明白为啥了。</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>王树森强化学习网课-L07-高估问题</title>
+    <link href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/"/>
+    <url>/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/</url>
+    
+    <content type="html"><![CDATA[<h1 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h1><p>其实，我们如果用之前讲过的东西进行价值学习，就一定会高估价值。高估问题的产生有两个来源：估计最值的偏移和自举。</p><h2 id="对最值估计的偏移"><a href="#对最值估计的偏移" class="headerlink" title="对最值估计的偏移"></a>对最值估计的偏移</h2><p>我们知道，根据梯度下降算法，我们此前所有的流程都在试图让对动作价值函数的估计逼近TD Target，但这个TD Target我们知道他并不是真实值，他只不过比单纯的估计多了几个真实的奖励而已。我们用最优动作价值函数举例：<br>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$<br>其中如果$q(s_t,a_t;\omega_t)$相比真实值有什么偏差，那偏差一定来源于同样未知的$\mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$。也就是我们需要考虑$\mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$和$\mathop{max}\limits_{a}Q^*(s_{t+1},a)$有什么区别。<br>我们这样考虑：<br>假如$q$已经能逼近$Q^*$，也就是大体趋势一致，但不能保证每个毛刺都一样，或者说$q$是$Q^*$叠加0均值的高斯噪声。那么这时：$E[q] &#x3D; E[Q^*];max(q) \geq max(Q^*);min(q) \leq min(Q^*)$。</p><blockquote><p>问题<br>其实我觉得这个叠加噪声后，最大值变大的说法不可靠</p></blockquote><p>于是：</p><ol><li>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t) \geq r_t + \gamma \cdot \mathop{max}\limits_{a}Q^*(s_{t+1},a)$</li><li>$Q^*(s_t,a_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}Q^*(s_{t+1},a)$</li><li>$q(s_t,a_t;\omega_t) \geq Q^*(s_t,a_t)$</li></ol><p>所以问题出在把$a^*$带入$q(s_{t+1},a^*;\omega_t)$的过程中会导致$y_t$偏大。</p><h2 id="自举"><a href="#自举" class="headerlink" title="自举"></a>自举</h2><p>自举，Bootstrapping，就是用一个估计过程产生的估计值去更新同一个估计过程，using an estimated value in the update step for the same kind of estimated value。<br>其实在这里就是描述$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$中，用$q(s_{t+1},a;\omega_t)$去更新$q(s_t,a_t;\omega_t)$的行为。如果某一次$q(s_{t+1},a;\omega_t)$的偏大，那么它更新出的$q(s_t,a_t;\omega_t)$也就偏大。$q(s_t,a_t;\omega_t)$这一次的偏大是表面，但更深层次地，它其实是导致了$\omega_t$更倾向于让$q$偏大，这就导致下一轮的$q(s_{t+1},a;\omega_t)$可能更大。一轮轮循环下来，你会发现他真就实现了自举（自己左脚踩右脚，螺旋升天），也就是正反馈。</p><blockquote><p>补充：<br>那感觉如果初值偏小，后期也会偏小</p></blockquote><p>至此，我们知道。对Q的估计偏大的原因来源于两个方面。取最值操作造成的$y_t$偏大是根本原因，罪魁祸首。而自举，也就是更新结构导致的正反馈会造成偏差随着迭代会越来越夸张。</p><h2 id="高估的危害"><a href="#高估的危害" class="headerlink" title="高估的危害"></a>高估的危害</h2><p>如果每个动作的价值都被均等高估，其实没事。因为我们的目标不是给出准确的价值估计，而是选出价值最高的动作。如果所有动作价值均等增大，那么价值最大的动作还是价值最大的动作。可我们一般都要用优先经验回放策略，这就导致了不同的经验被抽取的次数不同。被抽取的越多，正反馈迭代次数就越多，这个动作的价值就被拉高地越多。这就导致了不均匀高估。<br>我们总结下：</p><ol><li>高估的起因是取最值导致初始高估，但一定程度的初始高估没问题，大家都被高估，相当于都没被高估</li><li>高估的放大因素是自举，迭代一次自举一次，不均匀抽样带来不同动作不同的迭代次数，也就造成了不均匀高估，影响到了实验结果</li></ol><p>下面我们看，解决高估，其实是不均匀高估的一些策略</p><h1 id="引入Target-network"><a href="#引入Target-network" class="headerlink" title="引入Target network"></a>引入Target network</h1><p>这种方法旨在部分解决自举。他是这么做的：<br>引入一个新网络$q(s,a;\omega^-)$来在每一次计算$y_t$时负责估计$Q^*(s_{t+1},a)$，即：<br>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a,\omega^-_t)$<br>这个$\omega^-$怎么初始化和更新呐？<br>初始化可以直接用$\omega$初始化。更新如果每轮都用$\omega$更新，那就和原来一模一样，脱裤子放屁了。所以它为了拖延自举，用了个挺傻的方法，我隔个几轮再更新一次。更新的时候可以用用$\omega$直接赋值，也可以用一节惯性的方法：$\omega^- &#x3D; \tau \omega + (1-\tau)\omega^-$。<br>这种方法只能延迟自举，而且可能不太稳定。</p><h1 id="Double-DQN"><a href="#Double-DQN" class="headerlink" title="Double DQN"></a>Double DQN</h1><p>Double DQN方法是对单纯地引入Target network的改进，并没有根除Target network的局限。<br>它相对于Target network唯一的改进就在于把$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot \mathop{max}\limits_{a}q(s_{t+1},a,\omega^-_t)$拆成了两步：</p><ol><li>$a^* &#x3D; \mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$</li><li>$q(s_t,a_t;\omega_t) &#x3D; r_t + \gamma \cdot q(s_{t+1},a^*,\omega^-_t)$</li></ol><p>他好在哪呐？$\omega_t$网络选出的最高价值动作，在$\omega_t^-$网络眼里不一定是最高价值动作，$\omega_t^-$网络眼里的最高价值动作一定是他自己比较出来的最高价值动作。即：<br>$q(s_{t+1},a^*;\omega_t^-) \leq \mathop{max}\limits_{a} q(s_{t+1},a;\omega_t^-) \leq \mathop{max}\limits_{a} q(s_{t+1},a;\omega_t)$<br>也就是说，进一步抑制了自举。<br>所以Double DQN，好于直接引入Target network，好于什么都不做。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>强化学习入门</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>强化学习、课程笔记、王树森、20岁还没发过SCI</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>毕设求生日志-S01E02</title>
     <link href="/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/"/>
     <url>/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/</url>

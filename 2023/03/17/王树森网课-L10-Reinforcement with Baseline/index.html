@@ -14,26 +14,26 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Magic Chestnut">
-  <meta name="keywords" content="日志、毕设、强化学习">
+  <meta name="keywords" content="Reinforce、baseline">
   
-    <meta name="description" content="今日工作简表 看了王树森笔记的前几节，看到了高估问题  看了DataWhale的组队学习深度学习的预热直播   今日作息9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。 反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音">
+    <meta name="description" content="第三课我们学习策略学习的时候发现了一个问题：$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta}|{\theta &#x3D; \theta_t} &#x3D; Q{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}$中的$Q_{\pi}(s_t,a)$我们并不">
 <meta property="og:type" content="article">
-<meta property="og:title" content="毕设求生日志-S01E02">
-<meta property="og:url" content="http://example.com/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/index.html">
+<meta property="og:title" content="王树森强化学习网课-L10-Reinforcement With Baseline">
+<meta property="og:url" content="http://example.com/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L10-Reinforcement%20with%20Baseline/index.html">
 <meta property="og:site_name" content="来看雪泥焗鸿爪">
-<meta property="og:description" content="今日工作简表 看了王树森笔记的前几节，看到了高估问题  看了DataWhale的组队学习深度学习的预热直播   今日作息9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。 反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音">
+<meta property="og:description" content="第三课我们学习策略学习的时候发现了一个问题：$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta}|{\theta &#x3D; \theta_t} &#x3D; Q{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}$中的$Q_{\pi}(s_t,a)$我们并不">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-16T14:26:38.598Z">
-<meta property="article:modified_time" content="2023-03-16T14:50:19.482Z">
+<meta property="article:published_time" content="2023-03-17T08:31:08.561Z">
+<meta property="article:modified_time" content="2023-03-17T08:54:05.729Z">
 <meta property="article:author" content="Magic Chestnut">
-<meta property="article:tag" content="日志、毕设、强化学习、20岁还没发过SCI">
+<meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>毕设求生日志-S01E02 - 来看雪泥焗鸿爪</title>
+  <title>王树森强化学习网课-L10-Reinforcement With Baseline - 来看雪泥焗鸿爪</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="毕设求生日志-S01E02"></span>
+            <span id="subtitle" data-typed-text="王树森强化学习网课-L10-Reinforcement With Baseline"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-16 22:26" pubdate>
-          2023年3月16日 晚上
+        <time datetime="2023-03-17 16:31" pubdate>
+          2023年3月17日 下午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          730 字
+          1.3k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          7 分钟
+          11 分钟
         
       </span>
     
@@ -283,61 +283,16 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">毕设求生日志-S01E02</h1>
+            <h1 style="display: none">王树森强化学习网课-L10-Reinforcement With Baseline</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="今日工作简表"><a href="#今日工作简表" class="headerlink" title="今日工作简表"></a>今日工作简表</h1><ul>
-<li><p>看了王树森笔记的前几节，看到了高估问题</p>
-</li>
-<li><p>看了DataWhale的组队学习深度学习的预热直播</p>
-</li>
-</ul>
-<h1 id="今日作息"><a href="#今日作息" class="headerlink" title="今日作息"></a>今日作息</h1><p>9：10起床的。虽然比昨天计划的七点多晚了一个多小时，但还好。其实七点多我被闹铃叫醒了，但因为昨天做了些锻炼，有点累，就再睡了会儿，感觉疲惫的一天会更糟糕。</p>
-<p>反正，控制早起的根本不在于早起，而在于早睡。我今天一会儿上床再看会儿书，把自己搞困，十一点前正式入睡，带上眼罩，放上助眠音乐，到明天七点四十肯定已经睡够8h了，醒了直接就起，因为没有没睡够的理由了。</p>
-<h1 id="大总结"><a href="#大总结" class="headerlink" title="大总结"></a>大总结</h1><h2 id="今日收获"><a href="#今日收获" class="headerlink" title="今日收获"></a>今日收获</h2><p>虽然距离昨天定下的任务还差很多，但还是有些收获的。</p>
-<ul>
-<li><p>重新回顾了价值学习、策略学习、Actor-Critic、SARSA、QLearning、多步TD、优先经验回放都是些什么。</p>
-</li>
-<li><p>了解了深度学习学习路径。不要再看吴恩达、李飞飞了，看李沐的视频就行，比较新。然后pytorch也可以跟着他的视频开始。后面有时间跟着小甲鱼系统过python，然后学数据分析四个包，然后是刘二大人的pytorch</p>
-</li>
-</ul>
-<h2 id="今日困惑"><a href="#今日困惑" class="headerlink" title="今日困惑"></a>今日困惑</h2><ul>
-<li><p>为什么训练要让数据尽量没有相关性，尽量独立分布</p>
-</li>
-<li><p>为什么价值学习会出现高估问题</p>
-</li>
-</ul>
-<h2 id="仍需改进"><a href="#仍需改进" class="headerlink" title="仍需改进"></a>仍需改进</h2><ol>
-<li><p>作息。早上没起来，导致也没晨跑，也没有足够时间完成学习任务。</p>
-</li>
-<li><p>玩手机的时间太长。以后学习日，控制只在吃水果、健身的时候刷刷B站，中午上床千万别玩。</p>
-</li>
-</ol>
-<h2 id="列个计划"><a href="#列个计划" class="headerlink" title="列个计划"></a>列个计划</h2><p>明天：</p>
-<ul>
-<li><p>早期跑步</p>
-</li>
-<li><p>上午把党支部材料做完，交了</p>
-</li>
-<li><p>下午三点前把王树森的课程搞明白</p>
-</li>
-<li><p>下午五点前把视频做出来</p>
-</li>
-<li><p>晚上打听毕设，看一看学长的资料</p>
-</li>
-<li><p>最后把个人杂事给办了</p>
-</li>
-</ul>
-<p>近期：</p>
-<ul>
-<li><p>这周末两天，家教外，把PPT做完</p>
-</li>
-<li><p>下周二结束前，把EASY RL这本书搞懂，在理论上彻底入门RL</p>
-</li>
-</ul>
-<h1 id="闲扯几句"><a href="#闲扯几句" class="headerlink" title="闲扯几句"></a>闲扯几句</h1><p>别人都已经交初稿了！你一定要及其自律，提高效率，把进度赶上来！然后不要坚持特别稳的学习路线，要边学，边看论文了。</p>
+                <p>第三课我们学习策略学习的时候发现了一个问题：$\frac{\partial V_{\pi}(s_t;\theta)}{\partial \theta}|<em>{\theta &#x3D; \theta_t} &#x3D; Q</em>{\pi}(s_t,a) \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}$中的$Q_{\pi}(s_t,a)$我们并不知道。当时提出了两种方法，一种是用神经网络逼近，这种方法就是Actor-Critic Method，还有一种就是用$u_t$作为他的蒙特卡洛近似，缺点就是不能每一轮都进行更新，必须等到每一次任务结束才知道$u_t$，才能去更新参数，我们叫他REINFORCE方法。<br>此外，我们在第九课中学习了baseline这个小技巧，他可以在不影响蒙特卡洛近似的期望的同时，减小方差。我们现在就将baseline技巧，结合Reinforcement方法进行策略学习：<br><strong>首先选择合适的baseline</strong><br>王树森选择的baseline是$V_{\pi}(s_t)$，我觉得其他的baseline应该也是没问题的。现在的问题是baseline$V_{\pi}(s_t)$也是未知的。他又整了一个神经网络来近似，即$V(s_t;\omega)$。</p>
+<blockquote>
+<p>问题：<br>为啥又要弄一个神经网络，直接用$V_{\pi}(s_t;\theta)$不香吗？虽然$V_{\pi}(s_t;\theta)$未知，但是也可以蒙特卡洛吧。变成$u_t \pi(a_t|s_t;\theta)$</p>
+</blockquote>
+<p><strong>然后我得保证对baseline的逼近逼近于baseline</strong><br>那就得找个靶子，真实的basline我们也不知道，所以又要用蒙特卡洛给baseline找靶子，也就是$u_t$，因为$U_t$对$a_t$的期望就是$V_{\pi}(s_t)$。据此，我们定义逼近误差：$\delta_t &#x3D; V(s_t;\omega_t) - u_t$，我们希望通过更新$\omega$参数使得$\delta$更小，所以更新率为：$\omega_{t+1} &#x3D; \omega_t - \alpha \delta_t \frac{\partial V(s_t;\omega)}{\partial \omega}|<em>{\omega &#x3D; \omega_t}$。<br>接下来考虑更新$\theta$参数，使得$V</em>{\pi}(s_t;\theta)$更大。也就是$\theta_{t+1} &#x3D; \theta_t + \beta \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|<em>{\theta &#x3D; \theta_t} (u_t - V(s_t;\omega)) &#x3D; \theta_t - \beta \delta_t \frac{\partial log(\pi(a|s_t;\theta))}{\partial \theta}|</em>{\theta &#x3D; \theta_t}$<br><strong>就是这样</strong></p>
 
                 
               </div>
@@ -356,7 +311,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E7%BA%AA%E5%AE%9E/" class="category-chain-item">毕设求生纪实</a>
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="category-chain-item">强化学习入门</a>
   
   
 
@@ -371,7 +326,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E6%97%A5%E5%BF%97%E3%80%81%E6%AF%95%E8%AE%BE%E3%80%81%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#日志、毕设、强化学习、20岁还没发过SCI</a>
+        <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%81%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0%E3%80%81%E7%8E%8B%E6%A0%91%E6%A3%AE%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#强化学习、课程笔记、王树森、20岁还没发过SCI</a>
       
     </div>
   
@@ -383,8 +338,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>毕设求生日志-S01E02</div>
-      <div>http://example.com/2023/03/16/毕设求生日志-S01E02/</div>
+      <div>王树森强化学习网课-L10-Reinforcement With Baseline</div>
+      <div>http://example.com/2023/03/17/王树森网课-L10-Reinforcement with Baseline/</div>
     </div>
     <div class="license-meta">
       
@@ -396,7 +351,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年3月16日</div>
+          <div>2023年3月17日</div>
         </div>
       
       
@@ -428,9 +383,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L07-%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98/" title="王树森强化学习网课-L07-高估问题">
+                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L11-A2C/" title="王树森强化学习网课-L11-A2C">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">王树森强化学习网课-L07-高估问题</span>
+                        <span class="hidden-mobile">王树森强化学习网课-L11-A2C</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -438,8 +393,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L06-%E7%BB%8F%E9%AA%8C%E5%9B%9E%E6%94%BE/" title="王树森强化学习网课-L06-TD Learning">
-                        <span class="hidden-mobile">王树森强化学习网课-L06-TD Learning</span>
+                      <a href="/2023/03/17/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L09-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6%E4%B8%AD%E7%9A%84Baseline/" title="王树森强化学习网课-L09-策略梯度中的Baseline">
+                        <span class="hidden-mobile">王树森强化学习网课-L09-策略梯度中的Baseline</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
