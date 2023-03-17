@@ -14,17 +14,17 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Magic Chestnut">
-  <meta name="keywords" content="TD Learning、SARSA、QLearning">
+  <meta name="keywords" content="经验回放、优先经验回放">
   
-    <meta name="description" content="在强化学习中，我们训练价值网络时，基本都会用到TD Learning的思想。比如在单纯的DQN中，我们学习用TD算法更新最优动作价值函数$Q^*(s_t,a_t)$或其神经网络$q(s_t,a_t;w_t)$参数；在Actor-Critic方法中，我们用TD算法更新策略下的动作价值函数$Q_{\pi}(s_t,a_t)$或其神经网络$q(s_t,a_t;w_t)$参数；在Alpho-Go中，他们用">
+    <meta name="description" content="这一节，继续讲价值训练中的tricks~ Motivition此前DQN训练存在两个问题：  每条经验（体现在每个transition（$s_t,a_t,r_t,s_{t+1}$）里）只被用了一次就抛弃了，他可能还没被发掘完。此之谓“经验浪费”  相邻transtition序列间的相关性太强  解释一下：相关性强对训练学习不利，为啥不利，我目前还真不懂。    于是有人提出了经验回放(Experi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="王树森强化学习网课-L05-TD Learning">
-<meta property="og:url" content="http://example.com/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%BD%91%E8%AF%BE-L05-TD%20Learning/index.html">
+<meta property="og:title" content="王树森强化学习网课-L06-TD Learning">
+<meta property="og:url" content="http://example.com/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L06-%E7%BB%8F%E9%AA%8C%E5%9B%9E%E6%94%BE/index.html">
 <meta property="og:site_name" content="来看雪泥焗鸿爪">
-<meta property="og:description" content="在强化学习中，我们训练价值网络时，基本都会用到TD Learning的思想。比如在单纯的DQN中，我们学习用TD算法更新最优动作价值函数$Q^*(s_t,a_t)$或其神经网络$q(s_t,a_t;w_t)$参数；在Actor-Critic方法中，我们用TD算法更新策略下的动作价值函数$Q_{\pi}(s_t,a_t)$或其神经网络$q(s_t,a_t;w_t)$参数；在Alpho-Go中，他们用">
+<meta property="og:description" content="这一节，继续讲价值训练中的tricks~ Motivition此前DQN训练存在两个问题：  每条经验（体现在每个transition（$s_t,a_t,r_t,s_{t+1}$）里）只被用了一次就抛弃了，他可能还没被发掘完。此之谓“经验浪费”  相邻transtition序列间的相关性太强  解释一下：相关性强对训练学习不利，为啥不利，我目前还真不懂。    于是有人提出了经验回放(Experi">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-16T12:13:27.146Z">
-<meta property="article:modified_time" content="2023-03-16T13:26:26.244Z">
+<meta property="article:published_time" content="2023-03-16T14:03:03.368Z">
+<meta property="article:modified_time" content="2023-03-17T07:45:39.975Z">
 <meta property="article:author" content="Magic Chestnut">
 <meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>王树森强化学习网课-L05-TD Learning - 来看雪泥焗鸿爪</title>
+  <title>王树森强化学习网课-L06-TD Learning - 来看雪泥焗鸿爪</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="王树森强化学习网课-L05-TD Learning"></span>
+            <span id="subtitle" data-typed-text="王树森强化学习网课-L06-TD Learning"></span>
           
         </div>
 
@@ -214,7 +214,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-03-16 20:13" pubdate>
+        <time datetime="2023-03-16 22:03" pubdate>
           2023年3月16日 晚上
         </time>
       </span>
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.2k 字
+          1.2k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          27 分钟
+          10 分钟
         
       </span>
     
@@ -283,87 +283,49 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">王树森强化学习网课-L05-TD Learning</h1>
+            <h1 style="display: none">王树森强化学习网课-L06-TD Learning</h1>
             
             
               <div class="markdown-body">
                 
-                <p>在强化学习中，我们训练价值网络时，基本都会用到TD Learning的思想。比如在单纯的DQN中，我们学习用TD算法更新最优动作价值函数$Q^*(s_t,a_t)$或其神经网络$q(s_t,a_t;w_t)$参数；在Actor-Critic方法中，我们用TD算法更新策略下的动作价值函数$Q_{\pi}(s_t,a_t)$或其神经网络$q(s_t,a_t;w_t)$参数；在Alpho-Go中，他们用TD算法更新状态价值函数的神经网络参数$V_{\pi}(s_t)$。<br>这节课我们聚焦一下这个算法，介绍几个常见算法实现形式：SARSA，Q-Learning，Multi-Step TD Target。</p>
-<blockquote>
-<p>先都拿价值学习举例</p>
-</blockquote>
-<h1 id="SARSA"><a href="#SARSA" class="headerlink" title="SARSA"></a>SARSA</h1><h2 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h2><p>对策略下动作价值函数$Q_{\pi}(s_t,a_t)$进行学习的算法叫做SARSA算法。</p>
-<blockquote>
-<p>在Actor-Critic中，对策略下动作价值函数的神经网络参数的学习过程，我们就可以称为SARSA算法。</p>
-</blockquote>
-<h2 id="实现："><a href="#实现：" class="headerlink" title="实现："></a>实现：</h2><blockquote>
-<p>进行SARSA核心部分（函数更新）的实现，需要得到5个数据：$s_t,a_t,r_t,s_{t+1},a_{t+1}$，这就是SARSA名字的由来（State-Action-Reward-State-Action）。</p>
-</blockquote>
-<p><strong>表格表示法（直接更新价值，价值学习）：</strong></p>
-<blockquote>
-<p>只能应对状态和动作空间都有限的情况，也就是有限离散。对于连续的也可以离散化。</p>
-</blockquote>
+                <p>这一节，继续讲价值训练中的tricks~</p>
+<h1 id="Motivition"><a href="#Motivition" class="headerlink" title="Motivition"></a>Motivition</h1><p>此前DQN训练存在两个问题：</p>
 <ol>
-<li>最开始初始化一张策略$\pi$下的动作价值表：纵轴为状态空间，横轴为动作空间，每个元素代表一定状态一定动作下，在策略$\pi$下的动作价值。（我们要更新的就是这个表，在每轮的动作选择之前进行）</li>
-<li>在$t$时刻学习时，根据策略$\pi$，抽样出拟进行动作$a_{t+1}$。（此时$s_t,a_t,r_t,s_{t+1},a_{t+1}$齐全了）</li>
-<li>计算TD Target$y_t &#x3D; r_t + \gamma * Q_{\pi}(s_{t+1},a_{t+1})$。其中$Q_{\pi}(s_{t+1},a_{t+1})$就从动作价值表里直接读出来。</li>
-<li>计算TD Error$\delta_t &#x3D; Q_{\pi}(s_t,a_t) - y_t$。其中$Q_{\pi}(s_t,a_t)$就从动作价值表里直接读出来。</li>
-<li>更新动作价值表：$Q_{\pi}(s_t,a_t) &#x3D; Q_{\pi}(s_t,a_t) - \alpha \cdot \delta_t$</li>
-<li>$t+1$时刻不用再选动作，直接沿用预测时的$a_{t+1}$</li>
-</ol>
-<p><strong>网络表示法（更新价值网络参数，进而改变值）：</strong></p>
+<li><p>每条经验（体现在每个transition（$s_t,a_t,r_t,s_{t+1}$）里）只被用了一次就抛弃了，他可能还没被发掘完。此之谓“经验浪费”</p>
+</li>
+<li><p>相邻transtition序列间的相关性太强</p>
 <blockquote>
-<p>这下状态可以连续了，但因为还是价值学习，动作还连续不了。</p>
-</blockquote>
-<ol>
-<li><p>最开始初始化策略$\pi$下的动作价值函数网络$q_{\pi}(s,a;\omega)$的参数$\omega$。（我们要更新的就是这个$\omega$，在每轮的奖励获得之后、下一次动作选取之前进行）</p>
-</li>
-<li><p>在$t$时刻学习时，根据当前价值网络输出最大值，选出拟进行动作$a_{t+1}$。（此时$s_t,a_t,r_t,s_{t+1},a_{t+1}$齐全了）</p>
-</li>
-<li><p>计算TD Target$y_t &#x3D; r_t + \gamma * q_{\pi}(s_{t+1},a_{t+1};\omega_t)$。</p>
-</li>
-<li><p>计算TD Error$\delta_t &#x3D; q_{\pi}(s_t,a_t;\omega_t) - y_t$。</p>
-</li>
-<li><p>计算$d_{\omega,t} &#x3D; \frac{\partial q_{\pi}(s_t,a_t;\omega)}{\partial \omega}|_{\omega &#x3D; \omega_t}$</p>
-</li>
-<li><p>更新动作价值网络参数：$\omega_{t+1} &#x3D; \omega_t - \alpha \cdot \delta_t \cdot d_{\omega,t}$</p>
-</li>
-<li><p>$t+1$时刻不再选动作，直接沿用预测时的$a_{t+1}$</p>
-<h1 id="Q-Learning"><a href="#Q-Learning" class="headerlink" title="Q-Learning"></a>Q-Learning</h1><h2 id="定义：-1"><a href="#定义：-1" class="headerlink" title="定义："></a>定义：</h2><p>对最优动作价值函数进行学习更新的算法叫做Q-Learning。</p>
-<blockquote>
-<p>DQN就是一种Q-Learning</p>
+<p>解释一下：<br>相关性强对训练学习不利，为啥不利，我目前还真不懂。</p>
 </blockquote>
 </li>
 </ol>
-<h2 id="实现：-1"><a href="#实现：-1" class="headerlink" title="实现："></a>实现：</h2><p><strong>表格表示法：</strong></p>
-<ol>
-<li>最开始初始化一张动作价值表：纵轴为状态空间，横轴为动作空间，每个元素代表一定状态一定动作下，的最大动作价值。（我们要更新的就是这个表，在每轮的动作选择之前进行）</li>
-<li>在$t$时刻学习时，根据动作价值表，选出最大动作价值最大的拟进行动作$a_{t+1}$，即$a_{t+1} &#x3D; arg\mathop{max}\limits_{a}Q^*(s_{t+1},a)$，也就是比较出$s_{t+1}$那一行中最大的动作$a$。（此时$s_t,a_t,r_t,s_{t+1},a_{t+1}$齐全了）</li>
-<li>计算TD Target$y_t &#x3D; r_t + \gamma * Q^*(s_{t+1},a_{t+1})$。其中$Q^*(s_{t+1},a_{t+1})$查表可知。</li>
-<li>计算TD Error$\delta_t &#x3D; Q^*(s_t,a_t) - y_t$。其中$Q^*(s_t,a_t)$查表可知。</li>
-<li>更新动作价值表：$Q^*(s_t,a_t) &#x3D; Q^*(s_t,a_t) - \alpha \cdot \delta_t$</li>
-<li>$t+1$时刻重新选择动作</li>
+<p>于是有人提出了经验回放(Experience Replay)的策略。</p>
+<h1 id="朴素经验回放"><a href="#朴素经验回放" class="headerlink" title="朴素经验回放"></a>朴素经验回放</h1><ol>
+<li>开始我们创建一个FIFO队列结构的Experience Buffer，大小为$n$。$n$一般取很大，10W-100W间。</li>
+<li>每次平均随机抽取m条经验序列(mini batch)，对他们分别进行求TD Error和随机梯度（SG:Stochastic Gradient）$g_{ti}$的操作。</li>
+<li>对这些随机梯度求平均，得到平均梯度$g_t$，用它更新网络参数$\omega_{t+1} &#x3D; \omega_t - \alpha \cdot g_t$</li>
 </ol>
-<p><strong>网络表示法：</strong></p>
+<p>优点：</p>
 <ol>
-<li><p>最开始初始化最优动作价值函数网络$q(s,a;\omega)$的参数$\omega$。（我们要更新的就是这个$\omega$，在每轮的动作选择之前进行）</p>
+<li><p>随机从buffer中抽取，打乱了相邻序列的相关性</p>
 </li>
-<li><p>每次选在动作$a_{t+1}$前，根据$a_{t+1} &#x3D; arg\mathop{max}\limits_{a}q(s_{t+1},a;\omega_t)$选定拟进行动作$a_{t+1}$。（此时$s_t,a_t,r_t,s_{t+1},a_{t+1}$齐全了）</p>
+<li><p>历史经验可能使用多次，加大了利用率</p>
+<h1 id="优先经验回放"><a href="#优先经验回放" class="headerlink" title="优先经验回放"></a>优先经验回放</h1><p>随机抽取还不太科学。因为不同的经验，肯定重要性不同，重要性大的肯定应该加大被抽取的概率。<br><strong>怎么评判重要性呐？</strong><br>我们可以对buffer的每一条经验都求TD Error。TD Error越大，重要性越高。<br><strong>我们一般采取两种方案确定抽样概率</strong>$p_t$<strong>：</strong></p>
 </li>
-<li><p>计算TD Target$y_t &#x3D; r_t + \gamma * q(s_{t+1},a_{t+1};\omega_t)$。</p>
+<li><p>$p_t\propto |\delta_t| + \epsilon$;$\epsilon$的作用是防止概率为0</p>
 </li>
-<li><p>计算TD Error$\delta_t &#x3D; q(s_t,a_t;\omega_t) - y_t$。</p>
+<li><p>$pt \propto \frac{1}{rank(\delta_t)}$；$rank(\delta_t)$就是对$\delta_t$的降序排列序号</p>
 </li>
-<li><p>计算$d_{\omega,t} &#x3D; \frac{\partial q(s_t,a_t;\omega)}{\partial \omega}|_{\omega &#x3D; \omega_t}$</p>
-</li>
-<li><p>更新动作价值网络参数：$\omega_{t+1} &#x3D; \omega_t - \alpha \cdot \delta_t \cdot d_{\omega,t}$</p>
-<h1 id="Multi-Step-TD-Target"><a href="#Multi-Step-TD-Target" class="headerlink" title="Multi-Step TD Target"></a>Multi-Step TD Target</h1><p>之前的TD算法，都是单步TD，我们在每个Transition后立刻进行更新，也就是一个transition我们更新一次，且只利用一次的真实奖励。我们可以考虑，每一次更新用上多次的真实奖励，这不就能让TD Target更加接近真实的Target吗？<br>于是我们对SARSA和Q-Learning可以有新的改进：</p>
-<h2 id="SARSA-1"><a href="#SARSA-1" class="headerlink" title="SARSA"></a>SARSA</h2><p>$y_t &#x3D; \sum_{i&#x3D;0}^{m-1} \gamma^i \cdot r_i + \gamma^m \cdot Q_{\pi}(s_{t+m},a_{t+m})$或$y_t &#x3D; \sum_{i&#x3D;0}^{m-1} \gamma^i \cdot r_i + \gamma^m \cdot q_{\pi}(s_{t+m},a_{t+m};\omega_t)$</p>
-<h2 id="Q-Learning-1"><a href="#Q-Learning-1" class="headerlink" title="Q-Learning"></a>Q-Learning</h2><p>$y_t &#x3D; \sum_{i&#x3D;0}^{m-1} \gamma^i \cdot r_i + \gamma^m \cdot Q^*(s_{t+m},a_{t+m})$或$y_t &#x3D; \sum_{i&#x3D;0}^{m-1} \gamma^i \cdot r_i + \gamma^m \cdot q(s_{t+m},a_{t+m};\omega_t)$<br>这样，我们一方面保证了一步一更新，另一方面提升了TD Target中含有的真实数据，可以取得更好的效果。Multi-Step就是改进TD算法的一个trik。</p>
+</ol>
+<p>但非均匀抽样会导致偏差,所以需要相应地改变学习率(概率越大，学习率应该越小，让少学点他)。于是我们给原本的学习率都乘上一个系数:$(np_t)^{-\beta}$,$n$为被抽中次数,$\beta$为一个随学习过程变大的从0到1的参数</p>
 <blockquote>
-<p>非常类似滑动平均滤波</p>
+<p>问题<br>$n$保证被多次抽中的经验不被过多学习，$\beta$保证学习率始终缓慢降低。</p>
 </blockquote>
-</li>
+<p>于是,优先经验回放的算法流程为:</p>
+<ol>
+<li>开始我们创建一个FIFO队列结构的Experience Buffer，大小为$N$,并且让每一个刚进buffer的经验的抽取概率都给到最大值。$N$一般取很大，10W-100W间。</li>
+<li>根据TD Error更新每条经验的抽样概率，并根据概率分布随机抽取m条经验序列(mini batch)，更新他们的被学习次数，更新他们的学习率,求他们的随机梯度（SG:Stochastic Gradient）$g_{ti}$，最后求学习率与随机梯度之积。</li>
+<li>对这些学习率和随机梯度之积取平均得$\alpha \cdot g_t$，用它更新网络参数$\omega_{t+1} &#x3D; \omega_t - \alpha \cdot g_t$</li>
 </ol>
 
                 
@@ -410,8 +372,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>王树森强化学习网课-L05-TD Learning</div>
-      <div>http://example.com/2023/03/16/王树森强化学习网课-L05-TD Learning/</div>
+      <div>王树森强化学习网课-L06-TD Learning</div>
+      <div>http://example.com/2023/03/16/王树森网课-L06-经验回放/</div>
     </div>
     <div class="license-meta">
       
@@ -455,9 +417,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%BD%91%E8%AF%BE-L04-Actor-Critic%20Method/" title="王树森强化学习网课-L04-Actor-Critic Method">
+                      <a href="/2023/03/16/%E6%AF%95%E8%AE%BE%E6%B1%82%E7%94%9F%E6%97%A5%E5%BF%97-S01E02/" title="毕设求生日志-S01E02">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">王树森强化学习网课-L04-Actor-Critic Method</span>
+                        <span class="hidden-mobile">毕设求生日志-S01E02</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -465,8 +427,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L03-%E7%AD%96%E7%95%A5%E5%AD%A6%E4%B9%A0/" title="王树森强化学习网课-L03-策略学习">
-                        <span class="hidden-mobile">王树森强化学习网课-L03-策略学习</span>
+                      <a href="/2023/03/16/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L04-Actor-Critic%20Method/" title="王树森强化学习网课-L04-Actor-Critic Method">
+                        <span class="hidden-mobile">王树森强化学习网课-L04-Actor-Critic Method</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
