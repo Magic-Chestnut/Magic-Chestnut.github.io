@@ -225,15 +225,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L04-Actor-Critic%20Method/" target="_self">
-          王树森强化学习网课-L04-Actor-Critic Method
+        <a href="/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L03-%E7%AD%96%E7%95%A5%E5%AD%A6%E4%B9%A0/" target="_self">
+          王树森强化学习网课-L03-策略学习
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L04-Actor-Critic%20Method/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L03-%E7%AD%96%E7%95%A5%E5%AD%A6%E4%B9%A0/" target="_self">
         <div>
-          第三课中，我们看到，策略学习的过程中，也需要估计动作价值函数。第二课的价值学习中，我们知道了怎么用DQN学习价值函数，而且明确了单纯用价值函数来选择动作，只能应付动作空间离散的情况。所以我们一般希望采用策略学习，并用价值网络估计价值，也就是将两者结合起来。他俩的结合就叫Actor-Critic Method，其中策略网络充当Actor，价值网络充当Critic。 算法实现因为整体算法逻辑和策略学习
+          在第一课中,我们知道,实现强化学习任务可以通过价值学习或者策略学习.其中策略学习就是学习动作价值函数,并在每一轮中,选取动作价值最高的动作,这一点在第二课进行了详细阐述.策略学习,则是直接学习策略函数$\pi(a_t|s_t)$,在第一课的结尾我曾猜想策略函数的学习应该是要基于策略下的状态价值函数$V_{\pi}(s_t) &#x3D; E_A[Q_{\pi}(s_t,A)]$.这里我知道猜对了哈
         </div>
       </a>
 
