@@ -1,0 +1,709 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Magic Chestnut">
+  <meta name="keywords" content="DQN、TD Learning、SARSA、QLearning">
+  
+    <meta name="description" content="DQN与TD Learning通过第一课，我们知道了什么是最优动作价值函数$Q^*$，也明白了其意义(在一定$s$下,$Q^*$给所有$a$打分,agent可据此选出得分最高的$a$)。过程如下:  $Q^*(s_t,a_t) &#x3D; \mathop{max}\limits_{\pi}Q_{\pi}(s_t,a_t)$$a_t &#x3D; \mathop{max}\limits_{a} Q">
+<meta property="og:type" content="article">
+<meta property="og:title" content="王树森强化学习网课-L02-价值学习">
+<meta property="og:url" content="http://example.com/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L02-%E4%BB%B7%E5%80%BC%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="来看雪泥焗鸿爪">
+<meta property="og:description" content="DQN与TD Learning通过第一课，我们知道了什么是最优动作价值函数$Q^*$，也明白了其意义(在一定$s$下,$Q^*$给所有$a$打分,agent可据此选出得分最高的$a$)。过程如下:  $Q^*(s_t,a_t) &#x3D; \mathop{max}\limits_{\pi}Q_{\pi}(s_t,a_t)$$a_t &#x3D; \mathop{max}\limits_{a} Q">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-03T06:48:33.421Z">
+<meta property="article:modified_time" content="2023-03-16T09:32:42.482Z">
+<meta property="article:author" content="Magic Chestnut">
+<meta property="article:tag" content="强化学习、课程笔记、王树森、20岁还没发过SCI">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>王树森强化学习网课-L02-价值学习 - 来看雪泥焗鸿爪</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":30,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="王树森强化学习网课-L02-价值学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Magic Chestnut
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-03 14:48" pubdate>
+          2023年12月3日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">王树森强化学习网课-L02-价值学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="DQN与TD-Learning"><a href="#DQN与TD-Learning" class="headerlink" title="DQN与TD Learning"></a>DQN与TD Learning</h1><p>通过第一课，我们知道了什么是最优动作价值函数$Q^*$，也明白了其意义(在一定$s$下,$Q^*$给所有$a$打分,agent可据此选出得分最高的$a$)。过程如下:</p>
+<blockquote>
+<p>$Q^*(s_t,a_t) &#x3D; \mathop{max}\limits_{\pi}Q_{\pi}(s_t,a_t)$<br>$a_t &#x3D; \mathop{max}\limits_{a} Q^*(s_t,a)$</p>
+</blockquote>
+<p>看似非常美好,但有个根本性的问题:我们怎么得到$Q^*$?<br>实际上,通过学习$Q^*$来完成强化学习任务的方法就叫做价值学习.DQN就是用神经网络学习$Q^*$的价值学习方法.</p>
+<h2 id="DQN"><a href="#DQN" class="headerlink" title="DQN"></a>DQN</h2><p><strong>DQN神经网络的形式如下:</strong></p>
+<blockquote>
+<p>$Q(s_t,a_t;\omega_t)$</p>
+</blockquote>
+<p>我们希望DQN的输出能够逼近真正的$Q^*$,就得学习更新网络参数$\omega_t$.因为我们的目标是使得神经网络的估计接近真实,也就是误差减小,自然地,我们会想到梯度下降法:</p>
+<blockquote>
+<p>$L_t &#x3D; \frac{1}{2} (Q^*(s_t,a_t) - Q(s_t,a_t;w_t))^2$<br>$\omega_{t+1} &#x3D; \omega_t - \alpha \cdot \frac{\partial L_t}{\partial \omega}|<em>{\omega &#x3D; \omega_t} &#x3D; \omega_t - \alpha \cdot (Q^*(s_t,a_t) - Q(s_t,a_t;w_t)) \cdot \frac{\partial Q(s_t,a_t;w)}{\partial \omega} |</em>{\omega &#x3D; \omega_t}$</p>
+</blockquote>
+<p>但这里还是用到了未知的$Q^*$,所以不可行.除非我们把所有的路径都遍历完,才能找出$Q^*$.真找着了,那还要强化学习干嘛?全部硬遍历,算到地老天荒吧.</p>
+<hr>
+<h2 id="TD-Learning"><a href="#TD-Learning" class="headerlink" title="TD Learning"></a>TD Learning</h2><p><strong>这时我们需要引入TD Learning的思想:</strong></p>
+<ul>
+<li>$Q(s_t,a_t;w_t)$是完全没有根据的预测(一步都没走),可信度最低,需要找一个可信度比他高的参考;</li>
+<li>$Q^*(s_t,a_t)$是客观存在的结果,等于最好情况下的回报(所有步都走完了),可信度最高,但无法得到不能作为参考;</li>
+<li>我们可不可以利用上需要更新DQN时已经获得的数据,得到一个可行度介于DQN和$Q^*$之间的参考目标?毕竟,我们需要更新DQN的$\omega_t$为$\omega_{t+1}$时,第$t$步已经走完了,这一步的奖励$r_t$和下一步的状态$s_{t+1}$已经得到了.我们可以发现:$r_t + \gamma \cdot Q(s_{t+1},a_{t+1};\omega_t)$就是一个介于DQN和$Q^*$的选择,我们称之为<strong>TD Target</strong>.</li>
+</ul>
+<hr>
+<p><strong>具体怎么回事,可以看看这个不严谨的推理:</strong></p>
+<ol>
+<li><p>不管DQN还是$Q^*$,都是对回报$U_t$的估计,$U_t$根据定义满足下式:</p>
+<blockquote>
+<p>$U_t &#x3D; R_t + \gamma \cdot U_{t+1}$</p>
+</blockquote>
+</li>
+<li><p>进而将$U_t$替换为DQN后可得到:</p>
+<blockquote>
+<p>$\begin{aligned}<br>Q(s_t,a_t;w_t)<br>&amp; \approx E[R_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t)] \<br>&amp; \approx r_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t) \<br>&amp; \approx r_t + \gamma \cdot \mathop{max}<em>\limits{a} Q(s</em>{t+1},a;w_t)<br>\end{aligned}$</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<p><strong>好,总之我们目前有了</strong>$Q^*$<strong>的平替TD Target</strong>$y_t &#x3D; r_t + \gamma \cdot Q_{t+1}(s_{t+1},a_{t+1};w_t)$<strong>,就可以继续用梯度法更新权重了:</strong></p>
+<blockquote>
+<p>补充:<br>这里的$a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t)$.我们下一步的$a$不一定就是这个$a_{t+1}$,具体怎么回事后面再交代.</p>
+</blockquote>
+<blockquote>
+<p>$\begin{aligned}<br>&amp; q_t &#x3D; Q(s_t,a_t;w_t)\<br>&amp; a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t) \<br>&amp; y_t &#x3D; r_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t) \<br>&amp; L_t &#x3D; \frac{1}{2} (q_t - y_t)^2 \<br>&amp; \omega_{t+1} &#x3D; \omega_t - \alpha \frac{\partial L_t}{\partial\omega}|<em>{\omega &#x3D; \omega_t} \<br>&amp; d_t &#x3D; \frac{\partial Q(s</em>{t+1},a_{t+1};w) }{\partial \omega}|<em>{\omega &#x3D; \omega_t} \<br>&amp; \omega</em>{t+1} &#x3D; \omega_t - \alpha (q_t-y_t) \cdot d_t \<br>\end{aligned}$</p>
+</blockquote>
+<p>或者说:</p>
+<blockquote>
+<p>$\begin{aligned}<br>&amp; q_t &#x3D; Q(s_t,a_t;w_t)\<br>&amp; a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t) \<br>&amp; y_t &#x3D; r_t + \gamma \cdot Q(s_{t+1},a_{t+1};w_t) \<br>&amp; d_t &#x3D; \frac{\partial Q(s_{t+1},a_{t+1};w) }{\partial \omega}|\omega &#x3D; \omega_t \<br>&amp; \omega_{t+1} &#x3D; \omega_t - \alpha (q_t-y_t) \cdot d_t \<br>\end{aligned}$</p>
+</blockquote>
+<p>这就是TD Learning的全部.你给DQN输入状态$s$,他就会给你返回所有动作的打分.然后你再选出其中分数最高的动作就完成了agent选动作的步骤.然后agent得到这一步的reward,感知到下一步的state时,就可以更新DQN了,更新完选出下一步的action,这就是下一轮循环了.</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>我们在计算TD Target的时候,用到了一个下一时刻动作的估计$a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_t)$.这是我们站在$t$时刻对$t+1$时刻的估计,我们在$t+1$时刻,完全可以重新计算$a_{t+1} &#x3D; arg\mathop{max}\limits_a Q(s_t{t+1},a;\omega_{t+1})$.<br>如果我们真的采用了预测时给出的动作,这就死SARSA算法的思想,他的特点就是非常安全(毕竟你怎么预测就怎么做),相应地可能会表现的比较胆小.<br>如果我们用新的网络参数做了重新计算,那就是QLearning的思想,他的特点就是比较大胆,相应地没有SARSA那么安全.</p>
+<h1 id="DQN案例"><a href="#DQN案例" class="headerlink" title="DQN案例"></a>DQN案例</h1><p>看演示,用DQN就能做打砖块的游戏了.但我不会用python搭神经网络.所以过完这个理论课后,我得赶紧跟着李沐学深度学习了.</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8/" class="category-chain-item">强化学习入门</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E3%80%81%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0%E3%80%81%E7%8E%8B%E6%A0%91%E6%A3%AE%E3%80%8120%E5%B2%81%E8%BF%98%E6%B2%A1%E5%8F%91%E8%BF%87SCI/">#强化学习、课程笔记、王树森、20岁还没发过SCI</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>王树森强化学习网课-L02-价值学习</div>
+      <div>http://example.com/2023/12/03/王树森网课-L02-价值学习/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Magic Chestnut</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L04-Actor-Critic%20Method/" title="王树森强化学习网课-L04-Actor-Critic Method">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">王树森强化学习网课-L04-Actor-Critic Method</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/03/%E7%8E%8B%E6%A0%91%E6%A3%AE%E7%BD%91%E8%AF%BE-L01-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="王树森强化学习网课-L01-基本概念">
+                        <span class="hidden-mobile">王树森强化学习网课-L01-基本概念</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
